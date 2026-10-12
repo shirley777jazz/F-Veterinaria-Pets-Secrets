@@ -1,0 +1,121 @@
+<div class="perfil">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <h1 class="h2 fw-bold">Mi Perfil</h1>
+                <p class="text-muted">Actualiza tu información personal</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-xl-8 order-1">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Mensajes -->
+                    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        {{ successMessage }}
+                    </div>
+
+                    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{ errorMessage }}
+                    </div>
+
+                    <form (ngSubmit)="onSubmit()">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="nombre" class="form-label">Nombre Completo *</label>
+                                <input type="text" class="form-control" id="nombre" [(ngModel)]="formData.nombreCompleto"
+                                    name="nombreCompleto" 
+                                    placeholder="Ej: Juan Pérez García"
+                                    minlength="2" maxlength="150"
+                                    required>
+                                <small class="text-muted">Entre 2 y 150 caracteres</small>
+                            </div>
+
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="email" class="form-label">Correo Electrónico *</label>
+                                <input type="email" class="form-control" id="email" [(ngModel)]="formData.email"
+                                    name="email" 
+                                    placeholder="Ej: usuario@ejemplo.com"
+                                    required>
+                                <small class="text-muted">Formato válido de email</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" id="telefono" [(ngModel)]="formData.telefono"
+                                    name="telefono" placeholder="Ej: 987654321" 
+                                    pattern="^9[0-9]{8}$" 
+                                    title="El teléfono debe tener 9 dígitos y empezar con 9"
+                                    required>
+                            </div>
+
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="password" class="form-label">Nueva Contraseña (Opcional)</label>
+                                <input type="password" class="form-control" id="password" [(ngModel)]="formData.password"
+                                    name="password" placeholder="Dejar vacío para mantener actual"
+                                    minlength="6" maxlength="20">
+                                <small class="text-muted">Mínimo 6 caracteres, máximo 20</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">* Campos obligatorios</small>
+                                <br>
+                                <small class="text-info">💡 El teléfono debe empezar con 9 y tener 9 dígitos</small>
+                            </div>
+                            <button type="submit" class="btn btn-guardar" [disabled]="loading || !isFormValid()">
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                                {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4 order-2">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Resumen del Perfil</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="profile-avatar mb-3">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <h6 class="fw-bold">{{ currentUser?.nombreCompleto }}</h6>
+                    <p class="text-muted mb-2">{{ currentUser?.email }}</p>
+                    <p class="text-muted">{{ currentUser?.telefono }}</p>
+
+                    <hr>
+
+                    <div class="profile-stats">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number">3</div>
+                                <div class="stat-label">Pedidos</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number">1</div>
+                                <div class="stat-label">Adopción</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number">1</div>
+                                <div class="stat-label">Citas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

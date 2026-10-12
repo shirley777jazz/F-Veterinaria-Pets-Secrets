@@ -1,0 +1,32 @@
+h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.slide-description {
+    white-space: pre-line;
+}
+
+.carousel-indicators [data-bs-target] {
+    height: 1.5rem;
+    width: 1.5rem;
+    margin: 1rem;
+    border-radius: 50%;
+    background-color: var(--azul);
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+    width: 4rem;
+    height: 4rem;
+}
+
+@media screen and (width < 768px) {
+    img {
+        height: 30rem;
+        object-fit: cover;
+    }
+
+}

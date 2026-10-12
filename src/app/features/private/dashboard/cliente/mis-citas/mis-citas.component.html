@@ -1,0 +1,204 @@
+<div class="mis-citas">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="header-content">
+                        <h1 class="h2 fw-bold mb-1">Mis Citas</h1>
+                        <p class="text-muted mb-0">Gestiona tus citas veterinarias</p>
+                    </div>
+                    <div class="header-actions">
+                        <a routerLink="/servicio-formulario" class="btn btn-primary">
+                            <i class="bi bi-calendar-plus me-2"></i>
+                            <span class="btn-text">Agendar Nueva Cita</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="row" *ngIf="cargando">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-3 text-muted">Cargando tus citas...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="row" *ngIf="error && !cargando">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {{ error }}
+                <button class="btn btn-outline-danger btn-sm ms-3" (click)="cargarMisCitas()">
+                    Reintentar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Próximas Citas -->
+    <div class="row mb-5" *ngIf="!cargando && !error && citasProximas.length > 0">
+        <div class="col-12">
+            <h3 class="h4 fw-bold mb-3">Próximas Citas</h3>
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-6 col-xl-4 mb-3" *ngFor="let cita of citasProximas">
+                    <app-mi-cita-card [cita]="transformCita(cita)" tipo="proxima"
+                        (verDetalles)="verDetallesCita(cita)" (cancelar)="cancelarCita(cita)">
+                    </app-mi-cita-card>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Citas -->
+    <div class="row" *ngIf="!cargando && !error && historialCitas.length > 0">
+        <div class="col-12">
+            <h3 class="h4 fw-bold mb-3">Historial de Citas</h3>
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-6 col-xl-4 mb-3" *ngFor="let cita of historialCitas">
+                    <app-mi-cita-card [cita]="transformCita(cita)" tipo="historial"
+                        (verDetalles)="verDetallesCita(cita)" (cancelar)="cancelarCita(cita)">
+                    </app-mi-cita-card>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="row" *ngIf="!cargando && !error && citas.length === 0">
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+                <h3 class="fw-bold mb-3">No tienes citas programadas</h3>
+                <p class="text-muted mb-4">Agenda tu primera cita veterinaria para el cuidado de tus mascotas</p>
+                <a routerLink="/servicio-formulario" class="btn btn-primary">
+                    <i class="bi bi-calendar-plus me-2"></i>
+                    Agendar Mi Primera Cita
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalles de Cita -->
+<div class="modal fade" id="modalDetallesCita" tabindex="-1" aria-labelledby="modalDetallesCitaLabel" aria-hidden="true" *ngIf="citaSeleccionada">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content modal-detalle-cita">
+            <!-- Header simple y elegante -->
+            <div class="modal-header-detalle">
+                <h5 class="modal-title-detalle">Detalles de la Cita</h5>
+                <button type="button" class="btn-close-detalle" data-bs-dismiss="modal" aria-label="Close">×</button>
+            </div>
+
+            <div class="modal-body-detalle">
+                <!-- Estado y fecha en header interno -->
+                <div class="cita-header-info">
+                    <div class="estado-fecha-container">
+                        <span class="estado-badge" [ngClass]="getEstadoClass(citaSeleccionada.estado)">
+                            {{ getEstadoLabel(citaSeleccionada.estado) }}
+                        </span>
+                        <div class="fecha-info">
+                            <div class="fecha-texto">Fecha:</div>
+                            <div class="fecha-valor">{{ formatearFecha(citaSeleccionada.fecha) }}</div>
+                            <div class="hora-valor">{{ formatearHora(citaSeleccionada.hora) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Propietario Section -->
+                <div class="seccion-detalle">
+                    <div class="seccion-header">
+                        <i class="bi bi-person-circle seccion-icon propietario-icon"></i>
+                        <h6 class="seccion-titulo">Propietario</h6>
+                    </div>
+                    <div class="seccion-content">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">NOMBRE</span>
+                                <span class="info-valor">{{ citaSeleccionada.usuarioNombre || 'Usuario Actual' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">TELÉFONO</span>
+                                <span class="info-valor">{{ citaSeleccionada.usuarioTelefono || 'No especificado' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">EMAIL</span>
+                                <span class="info-valor">{{ citaSeleccionada.usuarioEmail || 'No especificado' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="seccion-grid">
+                    <!-- Mascota Section -->
+                    <div class="seccion-detalle">
+                        <div class="seccion-header">
+                            <i class="bi bi-heart-fill seccion-icon mascota-icon"></i>
+                            <h6 class="seccion-titulo">Mascota</h6>
+                        </div>
+                        <div class="seccion-content">
+                            <div class="info-item">
+                                <span class="info-label">NOMBRE</span>
+                                <span class="info-valor destacado">{{ citaSeleccionada.mascotaNombre }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ESPECIE</span>
+                                <span class="info-valor">{{ citaSeleccionada.mascotaEspecie }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">RAZA</span>
+                                <span class="info-valor">{{ citaSeleccionada.mascotaRaza }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicio Section -->
+                    <div class="seccion-detalle">
+                        <div class="seccion-header">
+                            <i class="bi bi-hospital seccion-icon servicio-icon"></i>
+                            <h6 class="seccion-titulo">Servicio</h6>
+                        </div>
+                        <div class="seccion-content">
+                            <div class="info-item">
+                                <span class="info-label">SERVICIO</span>
+                                <span class="info-valor destacado">{{ citaSeleccionada.servicioNombre }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">DESCRIPCIÓN</span>
+                                <span class="info-valor">{{ citaSeleccionada.servicioDescripcion }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">PRECIO</span>
+                                <span class="info-valor">S/ {{ citaSeleccionada.servicioPrecio }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">SEDE</span>
+                                <span class="info-valor">{{ citaSeleccionada.sedeNombre }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">DIRECCIÓN</span>
+                                <span class="info-valor">{{ citaSeleccionada.sedeDireccion }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notas adicionales -->
+                <div class="seccion-detalle notas-seccion" *ngIf="citaSeleccionada.notas">
+                    <div class="seccion-header">
+                        <i class="bi bi-sticky seccion-icon notas-icon"></i>
+                        <h6 class="seccion-titulo">Notas Adicionales</h6>
+                    </div>
+                    <div class="seccion-content">
+                        <div class="notas-texto">{{ citaSeleccionada.notas }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

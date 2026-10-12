@@ -1,0 +1,101 @@
+<div class="carrito-wrapper">
+  <!-- Indicador de carga -->
+  <div *ngIf="cargandoCarrito" class="cargando-carrito">
+    <div class="spinner"></div>
+    <p>Cargando tu carrito...</p>
+  </div>
+
+  <!-- Header cuando hay productos -->
+  <div *ngIf="!cargandoCarrito && totalItems > 0" class="carrito-header">
+    <h1>Carrito de Compras</h1>
+    <p>Revisa tus productos antes de finalizar la compra</p>
+  </div>
+
+  <!-- Carrito vacío -->
+  <div *ngIf="!cargandoCarrito && totalItems === 0" class="carrito-vacio">
+    <div class="carrito-icono">🛍️</div>
+    <h2>Tu carrito está vacío</h2>
+    <p>Agrega algunos productos para comenzar tu compra</p>
+    <div class="explorar-wrapper">
+      <button class="btn-explorar" (click)="irAProductos()">Explorar Productos</button>
+    </div>
+  </div>
+
+  <!-- Carrito con productos -->
+  <div *ngIf="!cargandoCarrito && totalItems > 0" class="carrito-contenedor">
+    <!-- Lista de productos -->
+    <div class="carrito-productos">
+      <div class="carrito-header-linea">
+        <h2>Productos ({{ totalItems }})</h2>
+        <button class="btn-vaciar" 
+                (click)="vaciarCarrito()" 
+                [disabled]="procesandoAccion">
+          <span *ngIf="!procesandoAccion">🗑 Vaciar carrito</span>
+          <span *ngIf="procesandoAccion">⏳ Vaciando...</span>
+        </button>
+      </div>
+
+      <div *ngFor="let item of items" class="producto-item">
+        <img class="producto-img" 
+             [src]="item.productoImagenUrl || 'assets/general/logo-pets.webp'" 
+             [alt]="item.productoNombre">
+        <div class="info">
+          <h3>{{ item.productoNombre }}</h3>
+          <span class="precio">S/{{ item.precioUnitario.toFixed(2) }}</span>
+          <span class="subtotal-item">Subtotal: S/{{ item.subtotal.toFixed(2) }}</span>
+        </div>
+        <div class="acciones">
+          <button class="btn-cantidad" 
+                  (click)="disminuirCantidad(item)" 
+                  [disabled]="item.cantidad <= 1 || procesandoAccion">-</button>
+          <span class="cantidad-display">{{ item.cantidad }}</span>
+          <button class="btn-cantidad" 
+                  (click)="aumentarCantidad(item)"
+                  [disabled]="procesandoAccion">+</button>
+          <button class="btn-eliminar" 
+                  (click)="eliminarItem(item)"
+                  [disabled]="procesandoAccion"
+                  title="Eliminar producto">🗑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen del pedido -->
+    <div class="resumen-pedido">
+      <h3>Resumen del Pedido</h3>
+      <p class="subtitulo">Detalles de tu compra</p>
+
+      <div class="detalle">
+        <span>Subtotal:</span>
+        <span>S/ {{ subtotal.toFixed(2) }}</span>
+      </div>
+      <div class="detalle">
+        <span>Envío:</span>
+        <span><strong>Gratis</strong></span>
+      </div>
+      <hr>
+      <div class="detalle total">
+        <span>Total:</span>
+        <strong>S/ {{ total.toFixed(2) }}</strong>
+      </div>
+
+      <button class="btn-principal" 
+              (click)="pagar()" 
+              [disabled]="!puedePagar()">
+        <span *ngIf="!procesandoAccion">{{ logueado ? 'Finalizar Compra' : 'Iniciar Sesión para Comprar' }}</span>
+        <span *ngIf="procesandoAccion">Procesando...</span>
+      </button>
+
+      <p *ngIf="!logueado" class="nota">Necesitas una cuenta para finalizar la compra</p>
+
+      <button class="btn-secundario" (click)="irAProductos()">Continuar Comprando</button>
+
+      <ul class="beneficios">
+        <li>• Envío gratis en pedidos mayores a S/50</li>
+        <li>• Entrega en 2-3 días hábiles</li>
+        <li>• 30 días de garantía</li>
+      </ul>
+    </div>
+  </div>
+
+

@@ -1,0 +1,24 @@
+<div class="product-card" (click)="viewProduct()">
+    <div class="product-image-container">
+        <img [src]="producto.imagenUrl || 'assets/general/logo-pets.webp'" [alt]="producto.nombre" class="product-image">
+        <span class="category-badge">{{producto.categoria.nombre}}</span>
+    </div>
+
+    <div class="product-info">
+        <h6 class="product-name">{{producto.nombre}}</h6>
+        <p class="product-price">S/{{producto.precio.toFixed(2)}}</p>
+        <p class="product-description">{{producto.descripcion || 'Sin descripción disponible'}}</p>
+        <div class="stock-info">
+            <span class="stock-text">Stock: {{producto.stock}}</span>
+        </div>
+        <button class="btn btn-primary add-to-cart-btn w-100" 
+                (click)="addToCart($event)"
+                [disabled]="producto.stock === 0 || agregandoCarrito">
+            <i *ngIf="!agregandoCarrito" class="fas fa-shopping-cart me-2"></i>
+            <i *ngIf="agregandoCarrito" class="fas fa-spinner fa-spin me-2"></i>
+            <span *ngIf="!agregandoCarrito && producto.stock > 0">Agregar</span>
+            <span *ngIf="!agregandoCarrito && producto.stock === 0">Sin Stock</span>
+            <span *ngIf="agregandoCarrito">Agregando...</span>
+        </button>
+    </div>
+</div>

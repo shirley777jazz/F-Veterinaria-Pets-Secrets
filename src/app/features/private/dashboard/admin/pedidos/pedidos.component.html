@@ -1,0 +1,422 @@
+<div class="pedidos-container">
+    <!-- Header -->
+    <div class="pedidos-header">
+        <div class="header-content">
+            <h1 class="titulo">Gestión de Pedidos</h1>
+            <p class="subtitulo">Administra los pedidos de la tienda</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-exportar" (click)="exportarPedidos()">
+                <i class="bi bi-download"></i>
+                Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <!-- Tarjetas de Estadísticas -->
+    <div class="row g-4 mb-4">
+        <!-- Pedidos pendientes -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Pedidos pendientes</h6>
+                        <h3 class="fw-bold mb-0">{{ stats.pendiente }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-box-seam fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Enviados -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Pedidos enviados</h6>
+                        <h3 class="fw-bold mb-0">{{ stats.enviado }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-heart fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Entregados -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Pedidos entregados</h6>
+                        <h3 class="fw-bold mb-0">{{ stats.entregado }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-truck fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Confirmados -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Pedidos procesando</h6>
+                        <h3 class="fw-bold mb-0">{{ stats.procesando }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-check-circle fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segunda fila de estadísticas -->
+    <div class="row g-4 mb-4">
+
+        <!-- Cancelados -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Pedidos cancelados</h6>
+                        <h3 class="fw-bold mb-0">{{ stats.cancelado }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-x-circle fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Pedidos -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Total pedidos</h6>
+                        <h3 class="fw-bold mb-0">{{ stats.totalPedidos }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-bag-check fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Valor total -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card bg-white rounded-3 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Valor Total</h6>
+                        <h3 class="fw-bold mb-0">{{ formatPrice(stats.valorTotal) }}</h3>
+                    </div>
+                    <div
+                        class="stat-icon bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Filtros y búsqueda -->
+    <div class="filtros-section">
+        <div class="filtros-header">
+            <div class="filtros-toggle">
+                <i class="bi bi-funnel"></i>
+                <span>Filtros</span>
+            </div>
+            <div class="filtros-actions">
+                <button class="btn-limpiar" (click)="limpiarFiltros()">
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+
+        <div class="filtros-content">
+            <div class="search-container">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar por ID, cliente o email..."
+                    [(ngModel)]="searchTerm" (input)="filtrarPedidos()">
+            </div>
+
+            <div class="filtro-estado">
+                <select class="estado-select" [(ngModel)]="filtroEstado" (change)="filtrarPedidos()">
+                    <option value="">Todos los estados</option>
+                    <option *ngFor="let estado of estados" [value]="estado">{{ getNombreEstado(estado) }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Pedidos -->
+    <div class="pedidos-section">
+        <div class="pedido-card" *ngFor="let pedido of pedidosFiltrados">
+            <div class="pedido-header">
+                <div class="pedido-id-section">
+                    <div class="cliente-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="pedido-info">
+                        <div class="pedido-id">{{ pedido.codigo }}</div>
+                        <div class="cliente-nombre">{{ pedido.usuarioNombre || 'Sin nombre' }}</div>
+                    </div>
+                </div>
+
+                <div class="pedido-meta">
+                    <div class="pedido-fecha">
+                        <i class="bi bi-calendar3"></i>
+                        {{ formatearFecha(pedido.fechaPedido) }}
+                    </div>
+                    <div class="pedido-contacto">
+                        <i class="bi bi-envelope"></i>
+                        {{ pedido.usuarioEmail || 'Sin email' }}
+                    </div>
+                    <div class="pedido-total">
+                        <i class="bi bi-cash"></i>
+                        {{ formatPrice(pedido.total) }}
+                    </div>
+                </div>
+
+                <div class="pedido-estado">
+                    <span class="estado-badge" [class]="getEstadoBadgeClass(pedido.estado)">
+                        {{ pedido.estado }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="pedido-productos">
+                <div class="productos-label">Productos ({{ pedido.detalles.length }})</div>
+                <div class="productos-list">
+                    <div class="producto-item" *ngFor="let producto of pedido.detalles">
+                        <span class="producto-nombre">{{ producto.productoNombre }}</span>
+                        <span class="producto-cantidad">x{{ producto.cantidad }}</span>
+                        <span class="producto-precio">{{ formatPrice(producto.precioUnitario) }}</span>
+                    </div>
+                </div>
+                <div class="productos-total">
+                    <strong>{{ formatPrice(pedido.total) }}</strong>
+                </div>
+            </div>
+
+            <div class="pedido-actions">
+                <button class="btn-accion btn-ver" (click)="verDetalle(pedido)" title="Ver Detalles">
+                    <i class="bi bi-eye"></i>
+                    Ver Detalles
+                </button>
+                
+                <div class="controles-admin">
+                    <div class="control-estado">
+                        <label class="control-label">Estado:</label>
+                        <select class="estado-select" 
+                                [ngModel]="pedido.estado"
+                                (ngModelChange)="cambiarEstado(pedido, $event)">
+                            <option *ngFor="let estado of getEstadosDisponibles()" [value]="estado">
+                                {{ getNombreEstado(estado) }}
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-fecha">
+                        <label class="control-label">Fecha de entrega:</label>
+                        <input type="date" 
+                               class="fecha-input"
+                               [ngModel]="formatearFechaParaInput(pedido.fechaEntrega)"
+                               [min]="getMinDate()"
+                               (ngModelChange)="actualizarFechaEntrega(pedido, $event)"
+                               placeholder="Seleccionar fecha">
+                    </div>
+                </div>
+                
+                <div class="estado-info" *ngIf="pedido.fechaEntrega">
+                    <span class="fecha-entrega-actual">
+                        <i class="bi bi-truck"></i>
+                        Entrega programada: {{ formatearFecha(pedido.fechaEntrega) }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje cuando no hay pedidos -->
+        <div *ngIf="pedidosFiltrados.length === 0" class="no-pedidos">
+            <i class="bi bi-bag-x"></i>
+            <h3>No se encontraron pedidos</h3>
+            <p>{{ searchTerm || filtroEstado ? 'Intenta con otros términos de búsqueda o filtros' : 'Aún no hay pedidos
+                registrados' }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles del pedido -->
+<div class="modal-overlay" *ngIf="mostrarDetalle" (click)="cerrarDetalle()">
+    <div class="modal-content modal-detalle" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Detalles del Pedido {{ pedidoDetalle?.id }}</h2>
+            <button class="btn-cerrar" (click)="cerrarDetalle()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+
+        <div class="detalle-content" *ngIf="pedidoDetalle">
+            <!-- Información básica en header simple -->
+            <div class="detalle-header-simple">
+                <div class="order-basic-info">
+                    <div class="order-code">
+                        <span class="code-label">Pedido:</span>
+                        <span class="code-value">{{ pedidoDetalle.id }}</span>
+                    </div>
+                    <div class="order-status">
+                        <span class="status-badge" [class]="getEstadoBadgeClass(pedidoDetalle.estado)">
+                            {{ pedidoDetalle.estado }}
+                        </span>
+                    </div>
+                    <div class="order-total">
+                        <span class="total-amount">{{ formatPrice(pedidoDetalle.total) }}</span>
+                    </div>
+                </div>
+                <div class="order-dates">
+                    <span class="date-info">Pedido: {{ formatearFecha(pedidoDetalle.fechaPedido) }}</span>
+                    <span class="date-info" *ngIf="pedidoDetalle.fechaEntrega">
+                        Entrega: {{ formatearFecha(pedidoDetalle.fechaEntrega) }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Contenido principal en secciones simples -->
+            <div class="detalle-body">
+                <!-- Información del Cliente -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-person-circle"></i>
+                        Datos del Cliente
+                    </h3>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-col">
+                                <label>Nombre</label>
+                                <span>{{ pedidoDetalle.usuarioNombre || 'Sin nombre' }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Correo</label>
+                                <span>{{ pedidoDetalle.usuarioEmail || 'Sin email' }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Teléfono</label>
+                                <span>{{ pedidoDetalle.telefonoContacto || 'Sin teléfono' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Entrega -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-geo-alt"></i>
+                        Datos de Entrega
+                    </h3>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-col full-width">
+                                <label>Dirección</label>
+                                <span>{{ pedidoDetalle.direccion }}</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-col">
+                                <label>Ciudad</label>
+                                <span>{{ pedidoDetalle.ciudad }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Código Postal</label>
+                                <span>{{ pedidoDetalle.codigoPostal }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Teléfono</label>
+                                <span>{{ pedidoDetalle.telefonoContacto }}</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-col payment-method">
+                                <label>Método de Pago</label>
+                                <span class="payment-badge">{{ pedidoDetalle.metodoPago }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen de Precios -->
+                <div class="resumen-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-calculator"></i>
+                        Resumen del Pedido
+                    </h3>
+                    <div class="resumen-card">
+                        <div class="resumen-body">
+                            <div class="resumen-item">
+                                <span class="resumen-label">Subtotal</span>
+                                <span class="resumen-value">{{ formatPrice(pedidoDetalle.subtotal) }}</span>
+                            </div>
+                            <div class="resumen-item">
+                                <span class="resumen-label">Costo de Envío</span>
+                                <span class="resumen-value">{{ formatPrice(pedidoDetalle.envio) }}</span>
+                            </div>
+                        </div>
+                        <div class="resumen-total">
+                            <div class="total-final">
+                                <span class="total-label">Total a Pagar</span>
+                                <span class="total-amount">{{ formatPrice(pedidoDetalle.total) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalle de Productos -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-box-seam"></i>
+                        Detalle de Productos
+                    </h3>
+                    <div class="products-container">
+                        <div class="product-card" *ngFor="let producto of pedidoDetalle.detalles">
+                            <div class="product-header">
+                                <h4 class="product-name">{{ producto.productoNombre }}</h4>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-detail">
+                                    <span class="detail-label">Cantidad</span>
+                                    <span class="detail-value quantity-badge">{{ producto.cantidad }}</span>
+                                </div>
+                                <div class="product-detail">
+                                    <span class="detail-label">Precio Unit.</span>
+                                    <span class="detail-value">{{ formatPrice(producto.precioUnitario) }}</span>
+                                </div>
+                                <div class="product-detail subtotal">
+                                    <span class="detail-label">Subtotal</span>
+                                    <span class="detail-value price-highlight">{{ formatPrice(producto.subtotal) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cerrar-detalle" (click)="cerrarDetalle()">
+                <i class="bi bi-x-circle"></i>
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+

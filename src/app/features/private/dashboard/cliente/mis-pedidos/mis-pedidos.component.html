@@ -1,0 +1,224 @@
+<div class="mis-pedidos-container">
+    <div class="header-section">
+        <h2><i class="fas fa-shopping-bag me-2"></i>Mis Pedidos</h2>
+        <p class="text-muted">Gestiona y consulta el estado de tus pedidos</p>
+    </div>
+
+    <!-- Estado de carga -->
+    <div class="row" *ngIf="mostrarMensajeCarga">
+        <div class="col-12">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <h5 class="text-muted">Cargando tus pedidos...</h5>
+                <p class="text-muted">Por favor espera un momento</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="row" *ngIf="errorMensaje">
+        <div class="col-12">
+            <div class="alert alert-danger text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                <h5>Error al cargar pedidos</h5>
+                <p>{{ errorMensaje }}</p>
+                <button class="btn btn-primary" (click)="recargarPedidos()">
+                    <i class="fas fa-refresh me-2"></i>Intentar de nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div class="row" *ngIf="pedidos.length > 0 && !cargandoPedidos">
+        <div class="col-12 col-md-6 col-lg-6 col-xl-4 mb-4" *ngFor="let pedido of pedidos">
+            <app-mi-pedido-card [pedido]="transformPedido(pedido)" (verDetalles)="verDetallesPedido($event)">
+            </app-mi-pedido-card>
+        </div>
+    </div>
+
+    <!-- Mensaje cuando no hay pedidos -->
+    <div class="row" *ngIf="mostrarMensajeSinPedidos">
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-shopping-bag fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No tienes pedidos aún</h4>
+                <p class="text-muted">¡Explora nuestra tienda y realiza tu primer pedido!</p>
+                <button class="btn btn-primary mt-3" routerLink="/tienda">
+                    <i class="fas fa-shopping-cart me-2"></i>Ir a la Tienda
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles del pedido -->
+<div class="modal-overlay" *ngIf="mostrarDetalle" (click)="cerrarDetalle()">
+    <div class="modal-content modal-detalle" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Detalles del Pedido {{ pedidoDetalle?.id }}</h2>
+            <button class="btn-cerrar" (click)="cerrarDetalle()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+
+        <div class="detalle-content" *ngIf="pedidoDetalle">
+            <!-- Información básica en header simple -->
+            <div class="detalle-header-simple">
+                <div class="order-basic-info">
+                    <div class="order-code">
+                        <span class="code-label">Pedido:</span>
+                        <span class="code-value">{{ pedidoDetalle.id }}</span>
+                    </div>
+                    <div class="order-status">
+                        <span class="status-badge" [class]="getEstadoBadgeClass(pedidoDetalle.estado)">
+                            {{ pedidoDetalle.estado }}
+                        </span>
+                    </div>
+                    <div class="order-total">
+                        <span class="total-amount">S/. {{ pedidoDetalle.total | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+                <div class="order-dates">
+                    <span class="date-info">Pedido: {{ formatearFecha(pedidoDetalle.fechaPedido) }}</span>
+                    <span class="date-info" *ngIf="pedidoDetalle.fechaEntrega">
+                        Entrega: {{ formatearFecha(pedidoDetalle.fechaEntrega) }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Contenido principal en secciones simples -->
+            <div class="detalle-body">
+                <!-- Información del Cliente -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-person-circle"></i>
+                        Datos del Cliente
+                    </h3>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-col">
+                                <label>Nombre</label>
+                                <span>{{ pedidoDetalle.usuarioNombre || usuarioActual?.nombre || 'Usuario Actual' }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Correo</label>
+                                <span>{{ pedidoDetalle.usuarioEmail || usuarioActual?.email || 'No especificado' }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Teléfono</label>
+                                <span>{{ pedidoDetalle.telefonoContacto || 'No especificado' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Entrega -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-geo-alt"></i>
+                        Datos de Entrega
+                    </h3>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-col full-width">
+                                <label>Dirección</label>
+                                <span>{{ pedidoDetalle.direccion }}</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-col">
+                                <label>Ciudad</label>
+                                <span>{{ pedidoDetalle.ciudad || 'Lima' }}</span>
+                            </div>
+                            <div class="info-col">
+                                <label>Código Postal</label>
+                                <span>{{ pedidoDetalle.codigoPostal || '15001' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Pago -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-credit-card"></i>
+                        Método de Pago
+                    </h3>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <div class="info-col payment-method">
+                                <label>Método de Pago</label>
+                                <span class="payment-badge">{{ pedidoDetalle.metodoPago }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen de Precios -->
+                <div class="resumen-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-calculator"></i>
+                        Resumen del Pedido
+                    </h3>
+                    <div class="resumen-card">
+                        <div class="resumen-body">
+                            <div class="resumen-item">
+                                <span class="resumen-label">Subtotal</span>
+                                <span class="resumen-value">S/. {{ pedidoDetalle.subtotal | number:'1.2-2' }}</span>
+                            </div>
+                            <div class="resumen-item">
+                                <span class="resumen-label">Costo de Envío</span>
+                                <span class="resumen-value">S/. {{ pedidoDetalle.envio | number:'1.2-2' }}</span>
+                            </div>
+                        </div>
+                        <div class="resumen-total">
+                            <div class="total-final">
+                                <span class="total-label">Total a Pagar</span>
+                                <span class="total-amount">S/. {{ pedidoDetalle.total | number:'1.2-2' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalle de Productos -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-box-seam"></i>
+                        Detalle de Productos
+                    </h3>
+                    <div class="products-container">
+                        <div class="product-card" *ngFor="let producto of pedidoDetalle.detalles">
+                            <div class="product-header">
+                                <h4 class="product-name">{{ producto.productoNombre }}</h4>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-detail">
+                                    <span class="detail-label">Cantidad</span>
+                                    <span class="detail-value quantity-badge">{{ producto.cantidad }}</span>
+                                </div>
+                                <div class="product-detail">
+                                    <span class="detail-label">Precio Unit.</span>
+                                    <span class="detail-value">S/. {{ producto.precioUnitario | number:'1.2-2' }}</span>
+                                </div>
+                                <div class="product-detail subtotal">
+                                    <span class="detail-label">Subtotal</span>
+                                    <span class="detail-value price-highlight">S/. {{ producto.subtotal | number:'1.2-2' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cerrar-detalle" (click)="cerrarDetalle()">
+                <i class="bi bi-x-circle"></i>
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>

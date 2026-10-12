@@ -1,0 +1,112 @@
+<div class="bg-light min-vh-100 my-5">
+  <div class="container py-5 contenido-formulario">
+    <!-- Encabezado -->
+    <div class="text-center mb-5">
+      <h1 class="fw-bold">Agendar Cita</h1>
+      <p class="text-muted">Programa una cita para tu mascota con nuestros veterinarios especializados</p>
+    </div>
+
+    <!-- Card del formulario -->
+    <div class="card shadow-sm mx-auto col-lg-8 col-md-10">
+      <div class="card-body">
+
+        <h5 class="mb-2">
+          <i class="bi bi-calendar-event"></i> Información de la Cita
+        </h5>
+        <p class="text-muted mb-3">Completa todos los campos para agendar tu cita</p>
+
+        <!-- Estados de carga y error -->
+        <div class="text-center mb-4" *ngIf="cargando">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2 text-muted">Cargando datos del formulario...</p>
+        </div>
+
+        <div class="alert alert-danger" *ngIf="error" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          {{ error }}
+        </div>
+
+        <div class="alert alert-success" *ngIf="exito" role="alert">
+          <i class="bi bi-check-circle me-2"></i>
+          ¡Cita agendada exitosamente! Redirigiendo a tus citas...
+        </div>
+
+        <form (ngSubmit)="onSubmit()" *ngIf="!cargando && !exito">
+          <!-- Selección de mascota -->
+          <h6 class="mb-2"><i class="bi bi-heart"></i> Seleccionar Mascota</h6>
+          <div class="row g-3 mb-3">
+            <div class="col-12">
+              <label class="form-label">Tu mascota *</label>
+              <select class="form-select" [(ngModel)]="formulario.mascotaId" name="mascotaId" required>
+                <option value="0">Selecciona una mascota</option>
+                <option *ngFor="let mascota of misMascotas" [value]="mascota.id">
+                  {{ mascota.nombre }} - {{ mascota.especie }} ({{ mascota.raza }})
+                </option>
+              </select>
+              <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Si no tienes mascotas registradas, <a routerLink="/usuario/mascotas">regístralas aquí</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalles de la cita -->
+          <h6 class="mb-2 mt-3"><i class="bi bi-clock"></i> Detalles de la Cita</h6>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Servicio requerido *</label>
+              <select class="form-select" [(ngModel)]="formulario.servicioId" name="servicioId" required>
+                <option value="0">Selecciona el servicio</option>
+                <option *ngFor="let servicio of servicios" [value]="servicio.id">
+                  {{ servicio.nombre }} - ${{ servicio.precio }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Sede *</label>
+              <select class="form-select" [(ngModel)]="formulario.sedeId" name="sedeId" required>
+                <option value="0">Selecciona la sede</option>
+                <option *ngFor="let sede of sedes" [value]="sede.id">
+                  {{ sede.nombre }} - {{ sede.direccion }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Fecha preferida *</label>
+              <input type="date" class="form-control" [(ngModel)]="formulario.fecha" name="fecha" required
+                     [min]="obtenerFechaMinima()">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hora preferida *</label>
+              <select class="form-select" [(ngModel)]="formulario.hora" name="hora" required>
+                <option value="">Selecciona la hora</option>
+                <option *ngFor="let hora of horas" [value]="hora">{{ hora }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Notas adicionales -->
+          <div class="mb-3 mt-3">
+            <label class="form-label">Notas adicionales</label>
+            <textarea class="form-control" rows="3" placeholder="Describe los síntomas o motivo de la consulta..."
+              [(ngModel)]="formulario.notas" name="notas"></textarea>
+            <div class="form-text">Información adicional que ayude al veterinario</div>
+          </div>
+
+          <!-- Botón de envío -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-lg btn-warning w-100" 
+                    [disabled]="enviando || cargando">
+              <span *ngIf="enviando" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i *ngIf="!enviando" class="bi bi-calendar-check me-2"></i>
+              {{ enviando ? 'Agendando...' : 'Agendar Cita' }}
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

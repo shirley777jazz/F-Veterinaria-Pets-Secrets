@@ -1,0 +1,598 @@
+/* Mis Citas Styles */
+.mis-citas {
+    padding: 0;
+}
+
+.page-header {
+    border-bottom: 1px solid var(--gris);
+    padding-bottom: 1rem;
+}
+
+/* Cita Cards */
+.cita-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.cita-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.cita-card.proxima {
+    border-left: 4px solid var(--azul);
+}
+
+.cita-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gris);
+}
+
+.cita-mascota {
+    color: var(--negro);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.cita-servicio {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.cita-details {
+    margin-bottom: 1.5rem;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--gris-oscuro);
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-row i {
+    width: 16px;
+    color: var(--azul);
+}
+
+.cita-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Table Styles */
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.table th {
+    background: var(--gris-claro);
+    border: none;
+    font-weight: 600;
+    color: var(--negro);
+    padding: 1rem;
+}
+
+.table td {
+    border: none;
+    border-bottom: 1px solid var(--gris);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--gris-claro);
+}
+
+/* Badges */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--azul);
+    border-color: var(--azul);
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+}
+
+.btn-outline-primary {
+    color: var(--azul);
+    border-color: var(--azul);
+    border-radius: 6px;
+}
+
+.btn-outline-primary:hover {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: white;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    border-radius: 6px;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-outline-secondary {
+    color: var(--gris-oscuro);
+    border-color: var(--gris);
+    border-radius: 6px;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--gris-oscuro);
+    border-color: var(--gris-oscuro);
+    color: var(--azul);
+}
+
+.btn-sm {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Empty State */
+.empty-state {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state i {
+    color: var(--gris);
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .page-header {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1rem !important;
+    }
+
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1.5rem;
+    }
+
+    .header-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .header-content p {
+        font-size: 0.9rem;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-text {
+        display: none;
+    }
+
+    .header-actions .btn .bi {
+        margin-right: 0 !important;
+    }
+
+    .cita-card {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .cita-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .cita-mascota {
+        font-size: 1.1rem;
+    }
+
+    .cita-servicio {
+        font-size: 0.9rem;
+    }
+
+    .detail-row {
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .detail-row i {
+        width: 16px;
+        font-size: 0.85rem;
+    }
+
+    .cita-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .cita-actions .btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .cita-actions .btn i {
+        margin-right: 0.5rem;
+    }
+
+    .table-responsive {
+        font-size: 0.8rem;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    .table th {
+        background-color: var(--gris-claro) !important;
+        font-weight: 600;
+    }
+
+    /* Ocultar algunas columnas en móvil */
+    .table th:nth-child(4),
+    .table td:nth-child(4),
+    .table th:nth-child(5),
+    .table td:nth-child(5) {
+        display: none;
+    }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .mis-citas {
+        padding: 0 0.5rem;
+    }
+
+    .page-header {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .cita-card {
+        padding: 1rem;
+    }
+
+    .header-actions .btn {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.75rem;
+    }
+
+    .detail-row {
+        font-size: 0.8rem;
+    }
+}
+
+/* ESTILOS PARA MODAL DE DETALLES DE CITA */
+.modal-detalle-cita {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header-detalle {
+    background:var(--azul);
+    border: none;
+    padding: 24px 32px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title-detalle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--blanco);
+    margin: 0;
+}
+
+.btn-close-detalle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--blanco);
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.btn-close-detalle:hover {
+    color: #e74c3c;
+}
+
+.modal-body-detalle {
+    padding: 0 32px 32px;
+    background: #fff;
+}
+
+.cita-header-info {
+    margin-bottom: 32px;
+    padding: 16px 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.estado-fecha-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.estado-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fecha-info {
+    text-align: right;
+}
+
+.fecha-texto {
+    font-size: 0.75rem;
+    color: var(--azul);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.fecha-valor {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--azul);
+    margin-bottom: 2px;
+}
+
+.hora-valor {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--azul);
+}
+
+.seccion-detalle {
+    margin-bottom: 28px;
+    background: #fdfdfd;
+    border-radius: 12px;
+    border: 1px solid var(--azul);
+    overflow: hidden;
+}
+
+.seccion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.seccion-header {
+    background:var(--azul);;
+    padding: 16px 20px;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    align-items: center;
+}
+
+.seccion-icon {
+    font-size: 1.25rem;
+    margin-right: 12px;
+}
+
+.propietario-icon {
+    color: var(--blanco);
+}
+
+.mascota-icon {
+    color: var(--blanco);
+}
+
+.servicio-icon {
+    color: var(--blanco);
+}
+
+.notas-icon {
+    color: var(--blanco);
+}
+
+.seccion-titulo {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--blanco);;
+    margin: 0;
+}
+
+.seccion-content {
+    padding: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.info-valor {
+    font-size: 0.95rem;
+    color: #2c3e50;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.info-valor.destacado {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.05rem;
+}
+
+.veterinario-nombre {
+    color: var(--azul) !important;
+    font-weight: 600 !important;
+}
+
+.notas-seccion {
+    background: var(--blanco);
+    border: 1px solid var(--azul);
+}
+
+.notas-seccion .seccion-header {
+    background: var(--azul);
+    color: white;
+}
+
+.notas-seccion .seccion-titulo {
+    color: white;
+}
+
+.notas-texto {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    background: var(--blanco);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--azul);
+}
+
+/* Estados */
+.bg-success {
+    background-color: #27ae60 !important;
+    color: white;
+}
+
+.bg-warning {
+    background-color: #f39c12 !important;
+    color: white;
+}
+
+.bg-info {
+    background-color: #3498db !important;
+    color: white;
+}
+
+.bg-danger {
+    background-color: #e74c3c !important;
+    color: white;
+}
+
+/* Responsive para modal */
+@media (max-width: 768px) {
+    .modal-header-detalle {
+        padding: 20px 24px 12px;
+    }
+    
+    .modal-title-detalle {
+        font-size: 1.25rem;
+    }
+    
+    .modal-body-detalle {
+        padding: 0 24px 24px;
+    }
+    
+    .seccion-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .estado-fecha-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .fecha-info {
+        text-align: left;
+    }
+}
+
+/* Tablet Portrait (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .cita-card {
+        padding: 1.25rem;
+    }
+
+    .cita-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .cita-actions .btn {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+}
+
+/* Desktop (992px+) */
+@media (min-width: 992px) {
+    .cita-actions {
+        flex-direction: row;
+        gap: 0.75rem;
+    }
+
+    .cita-actions .btn {
+        flex: 1;
+    }
+}

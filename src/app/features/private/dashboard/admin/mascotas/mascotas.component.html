@@ -1,0 +1,236 @@
+<div class="mascotas-management">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h2 class="page-title">Gestión de Mascotas</h2>
+                <p class="page-subtitle">Administra las mascotas disponibles para adopción</p>
+            </div>
+            <button class="btn-nuevo" (click)="abrirModalNuevo()">
+                <i class="bi bi-plus"></i>
+                Nueva Mascota
+            </button>
+        </div>
+    </div>
+
+    <!-- Sección Mascotas en el Sistema -->
+    <div class="content-section">
+        <div class="section-header">
+            <h3 class="section-title">Mascotas en el Sistema</h3>
+            <p class="section-subtitle">Lista de todas las mascotas con su estado de adopción</p>
+        </div>
+
+        <!-- Buscador -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar mascotas..." [(ngModel)]="searchTerm"
+                    (input)="filtrarMascotas()">
+            </div>
+        </div>
+
+        <!-- Indicador de loading -->
+        <div *ngIf="loading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Cargando mascotas...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div *ngIf="error" class="error-container">
+            <div class="error-message">
+                <i class="bi bi-exclamation-triangle"></i>
+                <p>{{ error }}</p>
+                <button class="btn-retry" (click)="cargarMascotas()">Reintentar</button>
+            </div>
+        </div>
+
+        <!-- Tabla de Mascotas -->
+        <div *ngIf="!loading && !error" class="table-container">
+            <table class="mascotas-table">
+                <thead>
+                    <tr>
+                        <th>Mascota</th>
+                        <th>Especie</th>
+                        <th>Raza</th>
+                        <th>Género</th>
+                        <th>Edad</th>
+                        <th>Estado de Adopción</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let mascota of mascotasFiltradas" class="mascota-row">
+                        <td class="mascota-cell">
+                            <div class="mascota-info">
+                                <div class="mascota-avatar">
+                                    <img *ngIf="mascota.fotoUrl; else iconTemplate" [src]="mascota.fotoUrl" [alt]="mascota.nombre" class="mascota-img">
+                                    <ng-template #iconTemplate>
+                                        <i class="bi" [class]="mascota.especie === 'perro' ? 'bi-heart' : 'bi-heart-fill'"></i>
+                                    </ng-template>
+                                </div>
+                                <span class="mascota-nombre">{{ mascota.nombre }}</span>
+                            </div>
+                        </td>
+                        <td class="especie-cell">
+                            <span class="especie-badge" [class]="'especie-' + mascota.especie.toLowerCase()">
+                                {{ obtenerNombreEspecie(mascota.especie) }}
+                            </span>
+                        </td>
+                        <td class="raza-cell">{{ mascota.raza }}</td>
+                        <td class="genero-cell">{{ mascota.genero }}</td>
+                        <td class="edad-cell">{{ mascota.edad }} {{ mascota.edad === 1 ? 'año' : 'años' }}</td>
+                        <td class="estado-cell">
+                            <span class="estado-badge" [class]="getBadgeClass(mascota.estadoAdopcion)">
+                                {{ obtenerNombreEstado(mascota.estadoAdopcion) }}
+                            </span>
+                        </td>
+                        <td class="fecha-cell">{{ mascota.fechaIngreso }}</td>
+                        <td class="acciones-cell">
+                            <div class="acciones-container">
+                                <button class="btn-accion btn-editar" (click)="editarMascota(mascota)" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-accion btn-eliminar" (click)="eliminarMascota(mascota)"
+                                    title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Nueva/Editar Mascota -->
+<div class="modal-overlay" [class.show]="mostrarModal" (click)="cerrarModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>{{ mascotaEditando ? 'Editar Mascota' : 'Nueva Mascota' }}</h3>
+            <button class="btn-cerrar" (click)="cerrarModal()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form class="mascota-form" (ngSubmit)="guardarMascota()">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" [(ngModel)]="mascotaForm.nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Especie</label>
+                        <select [(ngModel)]="mascotaForm.especie" name="especie" required>
+                            <option value="perro">Perro</option>
+                            <option value="gato">Gato</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Raza</label>
+                        <input type="text" [(ngModel)]="mascotaForm.raza" name="raza" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Género</label>
+                        <select [(ngModel)]="mascotaForm.genero" name="genero" required>
+                            <option value="macho">Macho</option>
+                            <option value="hembra">Hembra</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Edad (años)</label>
+                        <input type="number" [(ngModel)]="mascotaForm.edad" name="edad" min="0" max="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tamaño</label>
+                        <select [(ngModel)]="mascotaForm.tamano" name="tamano">
+                            <option value="pequeño">Pequeño</option>
+                            <option value="mediano">Mediano</option>
+                            <option value="grande">Grande</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select [(ngModel)]="mascotaForm.tipo" name="tipo">
+                            <option value="adopcion">Adopción</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Imagen de la Mascota</label>
+                    <div class="imagen-upload-container">
+                        <!-- Preview de imagen actual/seleccionada -->
+                        <div class="imagen-preview" *ngIf="imagenPreview">
+                            <img [src]="imagenPreview" alt="Preview" class="preview-img">
+                            <button type="button" class="btn-remove-image" (click)="removeImage()" title="Quitar imagen">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Input de archivo -->
+                        <div class="file-input-container" [class.has-preview]="imagenPreview">
+                            <input type="file" id="imagen" (change)="onFileSelected($event)" 
+                                   accept="image/*" class="file-input" name="imagen">
+                            <label for="imagen" class="file-input-label">
+                                <i class="bi bi-cloud-upload"></i>
+                                <span>{{ imagenPreview ? 'Cambiar imagen' : 'Seleccionar imagen' }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea [(ngModel)]="mascotaForm.descripcion" name="descripcion" rows="3"
+                        placeholder="Descripción de la mascota"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="mascotaForm.vacunado" name="vacunado">
+                            <span class="checkmark"></span>
+                            Vacunado
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="mascotaForm.esterilizado" name="esterilizado">
+                            <span class="checkmark"></span>
+                            Esterilizado
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="mascotaForm.buenoConNinos" name="buenoConNinos">
+                            <span class="checkmark"></span>
+                            Bueno con niños
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="mascotaForm.buenoConOtrasMascotas"
+                                name="buenoConOtrasMascotas">
+                            <span class="checkmark"></span>
+                            Bueno con otras mascotas
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancelar" (click)="cerrarModal()" [disabled]="loading">Cancelar</button>
+                    <button type="submit" class="btn-guardar" [disabled]="loading">
+                        <span *ngIf="loading" class="loading-spinner-small"></span>
+                        {{ loading ? 'Procesando...' : (mascotaEditando ? 'Actualizar' : 'Crear') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

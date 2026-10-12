@@ -1,0 +1,162 @@
+<div class="overview">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2 fw-bold mb-1">¡Hola, {{ userName }}!</h1>
+            <p class="text-muted">Aquí tienes un resumen de tu actividad en Pets Secretz</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-5">
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary-subtle">
+                    <i class="bi bi-heart text-primary"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-title">Mis Mascotas</div>
+                    <div class="stat-value">{{ stats.mascotas }}</div>
+                    <div class="stat-desc">
+                        {{ stats.mascotas === 1 ? 'Mascota registrada' : 'Mascotas registradas' }}
+                    </div>
+                    <a routerLink="/usuario/mascotas" class="stat-link">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-danger-subtle">
+                    <i class="bi bi-heart-fill text-danger"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-title">Adopciones</div>
+                    <div class="stat-value">{{ stats.adopciones }}</div>
+                    <div class="stat-desc">
+                        {{ solicitudesPendientesCount > 0 
+                            ? (solicitudesPendientesCount === 1 ? '1 Solicitud pendiente' : solicitudesPendientesCount + ' Solicitudes pendientes')
+                            : (stats.adopciones === 1 ? 'Solicitud registrada' : (stats.adopciones > 0 ? 'Solicitudes registradas' : 'Sin solicitudes')) }}
+                    </div>
+                    <a routerLink="/usuario/adopciones" class="stat-link">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-success-subtle">
+                    <i class="bi bi-bag text-success"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-title">Pedidos</div>
+                    <div class="stat-value">{{ stats.pedidos }}</div>
+                    <div class="stat-desc">
+                        {{ stats.pedidos === 1 ? 'Pedido realizado' : 'Pedidos realizados' }}
+                    </div>
+                    <a routerLink="/usuario/pedidos" class="stat-link">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning-subtle">
+                    <i class="bi bi-calendar-event text-warning"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-title">Citas</div>
+                    <div class="stat-value">{{ stats.citas }}</div>
+                    <div class="stat-desc">
+                        {{ stats.citas === 1 ? 'Próxima cita' : (stats.citas > 0 ? 'Próximas citas' : 'Sin citas pendientes') }}
+                    </div>
+                    <a routerLink="/usuario/citas" class="stat-link">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Cards -->
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-clock me-2"></i>Próximas Citas</h5>
+                    <p class="card-subtitle text-muted mb-0">Tus citas programadas</p>
+                </div>
+                <div class="card-body">
+                    <!-- Estado de Carga -->
+                    <div class="text-center py-4" *ngIf="cargandoCitas">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Cargando citas...</span>
+                        </div>
+                        <p class="mt-2 text-muted small mb-0">Cargando tus citas programadas...</p>
+                    </div>
+
+                    <!-- Lista de Citas Próximas -->
+                    <div class="citas-list" *ngIf="!cargandoCitas && proximasCitas.length > 0">
+                        <div class="cita-item" *ngFor="let cita of proximasCitas">
+                            <div class="cita-content">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">{{ cita.servicioNombre }}</h6>
+                                        <p class="text-muted mb-1">
+                                            <span *ngIf="cita.mascotaNombre">Mascota: <strong>{{ cita.mascotaNombre }}</strong></span>
+                                            <span *ngIf="cita.mascotaNombre && cita.sedeNombre"> &bull; </span>
+                                            <span *ngIf="cita.sedeNombre">{{ cita.sedeNombre }}</span>
+                                        </p>
+                                        <small class="text-primary fw-bold">{{ formatearFechaHora(cita) }}</small>
+                                    </div>
+                                    <span class="badge" [ngClass]="getEstadoClass(cita.estado)">
+                                        {{ getEstadoLabel(cita.estado) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="text-center py-4 text-muted" *ngIf="!cargandoCitas && proximasCitas.length === 0">
+                        <i class="bi bi-calendar-check display-6 d-block mb-2 text-secondary"></i>
+                        <p class="mb-3">No tienes citas programadas próximas</p>
+                        <a routerLink="/servicio-formulario" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-calendar-plus me-1"></i> Agendar Nueva Cita
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-3" *ngIf="proximasCitas.length > 0">
+                        <a routerLink="/usuario/citas" class="btn btn-ver">Ver Todas las Citas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="quick-actions">
+                        <a routerLink="/servicio-formulario" class="quick-action-btn mb-3">
+                            <i class="bi bi-calendar-plus me-2"></i>
+                            Agendar Cita
+                        </a>
+                        <a routerLink="/adopcion" class="quick-action-btn mb-3">
+                            <i class="bi bi-heart me-2"></i>
+                            Ver Mascotas en Adopción
+                        </a>
+                        <a routerLink="/productos" class="quick-action-btn mb-3">
+                            <i class="bi bi-bag-plus me-2"></i>
+                            Comprar Productos
+                        </a>
+                        <a routerLink="/usuario/perfil" class="quick-action-btn">
+                            <i class="bi bi-person-gear me-2"></i>
+                            Actualizar Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

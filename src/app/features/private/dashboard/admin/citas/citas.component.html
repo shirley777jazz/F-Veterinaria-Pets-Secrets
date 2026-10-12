@@ -1,0 +1,305 @@
+<div class="citas-container">
+    <!-- Header -->
+    <div class="citas-header">
+        <div class="header-content">
+            <h1 class="titulo">Gestión de Citas</h1>
+            <p class="subtitulo">Administra las citas veterinarias</p>
+        </div>
+        <button class="btn-nueva-cita" (click)="navegarAFormulario()">
+            <i class="bi bi-plus"></i>
+            Nueva Cita
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-section">
+        <div class="filtros-header">
+            <div class="filtros-toggle">
+                <i class="bi bi-funnel"></i>
+                <span>Filtros</span>
+            </div>
+            <div class="filtros-actions">
+                <button class="btn-limpiar" (click)="limpiarFiltros()">
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+
+        <div class="filtros-content">
+            <div class="search-container">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar por mascota, dueño o email..."
+                    [(ngModel)]="busqueda" (input)="onBusquedaChange()">
+            </div>
+
+            <div class="filtros-row">
+                <div class="filtro-estado">
+                    <select class="estado-select" [(ngModel)]="filtroEstado" (change)="onFiltroEstadoChange()">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="completada">Completada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+
+                <div class="filtro-fecha">
+                    <input type="date" class="fecha-input" [(ngModel)]="filtroFecha" (change)="onFiltroFechaChange()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div class="loading-container" *ngIf="loading">
+        <i class="bi bi-arrow-clockwise loading-icon"></i>
+        <span>Cargando citas...</span>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-container" *ngIf="error && !loading">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>{{ error }}</span>
+        <button class="btn-reintentar" (click)="cargarCitas()">Reintentar</button>
+    </div>
+
+    <!-- Lista de Citas -->
+    <div class="citas-section" *ngIf="!loading && !error">
+        <div class="cita-card" *ngFor="let cita of citasFiltradas" [class]="getEstadoClass(cita.estado)">
+            
+            <!-- Header de la cita -->
+            <div class="cita-header">
+                <div class="cliente-info">
+                    <div class="cliente-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="cliente-datos">
+                        <div class="nombre-mascota">{{ cita.mascotaNombre }}</div>
+                        <div class="nombre-cliente">{{ cita.usuarioNombre }}</div>
+                    </div>
+                </div>
+                <div class="estado-container">
+                    <span class="estado-badge" [class]="getEstadoClass(cita.estado)">
+                        {{ cita.estado | titlecase }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Detalles de la cita -->
+            <div class="cita-detalles">
+                <div class="detalle-item">
+                    <i class="bi bi-calendar3"></i>
+                    <span>{{ formatearFecha(cita.fecha) }}</span>
+                </div>
+                <div class="detalle-item">
+                    <i class="bi bi-clock"></i>
+                    <span>{{ formatearHora(cita.hora) }}</span>
+                </div>
+                <div class="detalle-item">
+                    <i class="bi bi-telephone"></i>
+                    <span>{{ cita.usuarioTelefono }}</span>
+                </div>
+                <div class="detalle-item">
+                    <i class="bi bi-envelope"></i>
+                    <span>{{ cita.usuarioEmail }}</span>
+                </div>
+            </div>
+
+            <!-- Servicio -->
+            <div class="cita-servicio">
+                <div class="servicio-label">Servicio Requerido</div>
+                <div class="servicio-nombre">{{ cita.servicioNombre }}</div>
+                <div class="veterinario-info">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>{{ cita.sedeNombre }}</span>
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="cita-observaciones" *ngIf="cita.notas && cita.notas.trim()">
+                <div class="observaciones-label">Observaciones:</div>
+                <div class="observaciones-texto">{{ cita.notas }}</div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="cita-actions">
+                <button class="btn-accion btn-editar" (click)="editarCita(cita)" title="Editar">
+                    <i class="bi bi-pencil"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Estado vacío -->
+        <div class="empty-state" *ngIf="citasFiltradas.length === 0">
+            <i class="bi bi-calendar-x"></i>
+            <h3>No se encontraron citas</h3>
+            <p>{{ busqueda || filtroEstado || filtroFecha ? 'Intenta con otros términos de búsqueda o filtros' : 'Aún no hay citas registradas' }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de edición -->
+<div class="modal-overlay" *ngIf="showEditForm" (click)="cancelarEdicion()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Editar Cita</h2>
+            <button class="btn-cerrar" (click)="cancelarEdicion()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" *ngIf="citaEditando">
+            <!-- Info de la Cita -->
+            <div class="cita-summary">
+                <div class="summary-header">
+                    <span class="cita-id">Cita: {{ citaEditando.id }}</span>
+                    <span class="estado-actual" [class]="getEstadoClass(citaEditando.estado)">{{ citaEditando.estado | titlecase }}</span>
+                </div>
+                <div class="summary-info">
+                    <span>Fecha: {{ formatearFecha(citaEditando.fecha) }}</span>
+                    <span>Hora: {{ formatearHora(citaEditando.hora) }}</span>
+                </div>
+            </div>
+
+            <!-- Datos del Cliente -->
+            <div class="seccion-datos">
+                <div class="seccion-header">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Datos del Cliente</span>
+                </div>
+                <div class="datos-grid">
+                    <div class="dato-item">
+                        <span class="dato-label">NOMBRE</span>
+                        <span class="dato-valor">{{ citaEditando.usuarioNombre }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">CORREO</span>
+                        <span class="dato-valor">{{ citaEditando.usuarioEmail }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">TELÉFONO</span>
+                        <span class="dato-valor">{{ citaEditando.usuarioTelefono }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos de la Mascota y Servicio -->
+            <div class="seccion-datos">
+                <div class="seccion-header">
+                    <i class="bi bi-heart"></i>
+                    <span>Datos del Servicio</span>
+                </div>
+                <div class="datos-grid">
+                    <div class="dato-item">
+                        <span class="dato-label">MASCOTA</span>
+                        <span class="dato-valor">{{ citaEditando.mascotaNombre }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">ESPECIE</span>
+                        <span class="dato-valor">{{ citaEditando.mascotaEspecie }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">SERVICIO</span>
+                        <span class="dato-valor">{{ citaEditando.servicioNombre }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">SEDE</span>
+                        <span class="dato-valor">{{ citaEditando.sedeNombre }}</span>
+                    </div>
+                    <div class="dato-item full-width" *ngIf="citaEditando.notas">
+                        <span class="dato-label">OBSERVACIONES</span>
+                        <span class="dato-valor">{{ citaEditando.notas }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cambiar Estado -->
+            <div class="seccion-datos">
+                <div class="seccion-header">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <span>Cambiar Estado</span>
+                </div>
+                <div class="estado-selector">
+                    <select [(ngModel)]="nuevoEstado" class="estado-select">
+                        <option value="pendiente">🕒 Pendiente</option>
+                        <option value="confirmada">✅ Confirmada</option>
+                        <option value="completada">🏆 Completada</option>
+                        <option value="cancelada">❌ Cancelada</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-guardar" (click)="guardarCambios()" [disabled]="loading">
+                {{ loading ? 'Guardando...' : 'Guardar' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="cerrarModalEliminar()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Confirmar Eliminación</h2>
+            <button class="btn-cerrar" (click)="cerrarModalEliminar()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" *ngIf="citaToDelete">
+            <div class="warning-message">
+                <div class="warning-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <p>¿Estás seguro de que deseas <strong>cancelar</strong> la siguiente cita?</p>
+            </div>
+            
+            <!-- Resumen de la cita a cancelar -->
+            <div class="cita-resumen">
+                <div class="resumen-header">
+                    <span class="cita-id">Cita: {{ citaToDelete.id }}</span>
+                    <span class="fecha-hora">{{ formatearFecha(citaToDelete.fecha) }} - {{ formatearHora(citaToDelete.hora) }}</span>
+                </div>
+            </div>
+
+            <!-- Datos principales -->
+            <div class="seccion-datos">
+                <div class="seccion-header">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Información de la Cita</span>
+                </div>
+                <div class="datos-grid">
+                    <div class="dato-item">
+                        <span class="dato-label">MASCOTA</span>
+                        <span class="dato-valor">{{ citaToDelete.mascotaNombre }} ({{ citaToDelete.mascotaEspecie }})</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">CLIENTE</span>
+                        <span class="dato-valor">{{ citaToDelete.usuarioNombre }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">SERVICIO</span>
+                        <span class="dato-valor">{{ citaToDelete.servicioNombre }}</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">SEDE</span>
+                        <span class="dato-valor">{{ citaToDelete.sedeNombre }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-note">
+                <i class="bi bi-exclamation-circle"></i>
+                <span>Esta acción cambiará el estado de la cita a "Cancelada"</span>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-eliminar" (click)="eliminarCita()" [disabled]="loading">
+                {{ loading ? 'Cancelando...' : 'Sí, cancelar cita' }}
+            </button>
+        </div>
+    </div>
+</div>
