@@ -20,14 +20,14 @@
     </div>
 
     <!-- Error -->
-    <div *ngIf="error && !loading" class="error-message">
+    <div *ngIf="error && !loading && !mostrarModal && !mostrarModalConfirmar" class="error-message">
         <i class="bi bi-exclamation-triangle"></i>
         {{ error }}
         <button (click)="cargarUsuarios()" class="btn-retry">Reintentar</button>
     </div>
 
     <!-- Sección Usuarios Registrados -->
-    <div *ngIf="!loading && !error" class="content-section">
+    <div *ngIf="!loading && (!error || mostrarModal || mostrarModalConfirmar)" class="content-section">
         <div class="section-header">
             <h3 class="section-title">Usuarios Registrados ({{ usuariosParaMostrar.length }})</h3>
             <p class="section-subtitle">Lista de todos los usuarios con sus detalles y estado</p>
@@ -93,6 +93,9 @@
             </button>
         </div>
         <div class="modal-body">
+            <div *ngIf="error" class="error-message-inline" style="margin-bottom: 1rem;">
+                {{ error }}
+            </div>
             <form class="usuario-form" (ngSubmit)="guardarUsuario()">
                 <div class="form-group">
                     <label>Nombre</label>
@@ -110,9 +113,10 @@
                         placeholder="Ingresa teléfono de usuario" required>
                 </div>
                 <div class="form-group">
-                    <label>Contraseña</label>
+                    <label>Contraseña {{ usuarioEditando ? '(opcional)' : '' }}</label>
                     <input type="password" [(ngModel)]="usuarioForm.password" name="password"
-                        placeholder="Ingresa contraseña de usuario" required>
+                        [placeholder]="usuarioEditando ? 'Dejar vacío para mantener la actual' : 'Ingresa contraseña de usuario'"
+                        [required]="!usuarioEditando">
                 </div>
                 <div class="form-group">
                     <label>Rol</label>
@@ -123,7 +127,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
-                    <button type="submit" class="btn-guardar">
+                    <button type="submit" class="btn-guardar" [disabled]="loading">
                         {{ usuarioEditando ? 'Actualizar' : 'Crear' }}
                     </button>
                 </div>

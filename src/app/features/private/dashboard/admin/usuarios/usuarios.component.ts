@@ -101,6 +101,7 @@ export class UsuariosComponent implements OnInit {
       password: '',
       rol: 'usuario' as 'usuario' | 'admin'
     };
+    this.error = '';
     this.mostrarModal = true;
   }
 
@@ -119,6 +120,7 @@ export class UsuariosComponent implements OnInit {
 
   confirmarEliminar(usuario: UserResponse): void {
     this.usuarioAEliminar = usuario;
+    this.error = '';
     this.mostrarModalConfirmar = true;
   }
 
@@ -127,7 +129,7 @@ export class UsuariosComponent implements OnInit {
 
     this.loading = true;
     
-    this.http.delete(`${this.apiUrl}/${this.usuarioAEliminar.id}`).subscribe({
+    this.usuarioService.eliminarUsuario(this.usuarioAEliminar.id).subscribe({
       next: () => {
         this.usuarios = this.usuarios.filter(u => u.id !== this.usuarioAEliminar!.id);
         this.filtrarUsuarios();
@@ -147,6 +149,7 @@ export class UsuariosComponent implements OnInit {
   cerrarModalConfirmar(): void {
     this.mostrarModalConfirmar = false;
     this.usuarioAEliminar = null;
+    this.error = '';
   }
 
   guardarUsuario(): void {
@@ -160,9 +163,9 @@ export class UsuariosComponent implements OnInit {
     if (this.usuarioEditando) {
       // Actualizar usuario existente
       const updateRequest: UpdateUserRequest = {
-        nombreCompleto: this.usuarioForm.nombreCompleto,
-        email: this.usuarioForm.email,
-        telefono: this.usuarioForm.telefono,
+        nombreCompleto: this.usuarioForm.nombreCompleto.trim(),
+        email: this.usuarioForm.email.trim(),
+        telefono: this.usuarioForm.telefono.trim(),
         rol: this.usuarioForm.rol
       };
       
@@ -170,7 +173,7 @@ export class UsuariosComponent implements OnInit {
         updateRequest.password = this.usuarioForm.password;
       }
 
-      this.http.put<UserResponse>(`${this.apiUrl}/${this.usuarioEditando.id}`, updateRequest).subscribe({
+      this.usuarioService.actualizarUsuario(this.usuarioEditando.id, updateRequest).subscribe({
         next: (usuarioActualizado) => {
           const index = this.usuarios.findIndex(u => u.id === this.usuarioEditando!.id);
           if (index !== -1) {
@@ -188,15 +191,15 @@ export class UsuariosComponent implements OnInit {
       });
     } else {
       // Crear nuevo usuario
-      const createRequest = {
-        nombreCompleto: this.usuarioForm.nombreCompleto,
-        email: this.usuarioForm.email,
-        telefono: this.usuarioForm.telefono,
+      const createRequest: RegisterRequest = {
+        nombreCompleto: this.usuarioForm.nombreCompleto.trim(),
+        email: this.usuarioForm.email.trim(),
+        telefono: this.usuarioForm.telefono.trim(),
         password: this.usuarioForm.password,
         rol: this.usuarioForm.rol
       };
 
-      this.http.post<UserResponse>(this.apiUrl, createRequest).subscribe({
+      this.usuarioService.crearUsuario(createRequest).subscribe({
         next: (nuevoUsuario) => {
           this.usuarios.push(nuevoUsuario);
           this.filtrarUsuarios();
@@ -215,6 +218,7 @@ export class UsuariosComponent implements OnInit {
   cerrarModal(): void {
     this.mostrarModal = false;
     this.usuarioEditando = null;
+    this.error = '';
   }
 
   private formatearFecha(fecha: string): string {
@@ -243,16 +247,21 @@ export class UsuariosComponent implements OnInit {
       return false;
     }
 
+    if (this.usuarioForm.password.trim() && (this.usuarioForm.password.length < 6 || this.usuarioForm.password.length > 20)) {
+      this.error = 'La contraseña debe tener entre 6 y 20 caracteres';
+      return false;
+    }
+
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.usuarioForm.email)) {
+    if (!emailRegex.test(this.usuarioForm.email.trim())) {
       this.error = 'El email no tiene un formato válido';
       return false;
     }
 
     // Validar formato de teléfono
     const phoneRegex = /^9\d{8}$/;
-    if (!phoneRegex.test(this.usuarioForm.telefono)) {
+    if (!phoneRegex.test(this.usuarioForm.telefono.trim())) {
       this.error = 'El teléfono debe tener 9 dígitos y empezar con 9';
       return false;
     }

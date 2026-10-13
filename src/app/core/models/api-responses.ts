@@ -22,4 +22,5 @@ export interface RegisterRequest {
   email: string;
   telefono: string;
   password: string;
+  rol?: 'usuario' | 'admin';
 }
