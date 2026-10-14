@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -50,7 +50,7 @@ export class UsuariosComponent implements OnInit {
     
     console.log('Cargando usuarios desde el backend API:', this.apiUrl);
     
-    this.http.get<UserResponse[]>(this.apiUrl).subscribe({
+    this.usuarioService.obtenerUsuarios().subscribe({
       next: (usuarios) => {
         console.log('Usuarios cargados del backend:', usuarios);
         this.usuarios = usuarios || [];
@@ -59,7 +59,13 @@ export class UsuariosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar usuarios del backend:', error);
-        this.error = `Error al conectar con el backend. Verificar que esté funcionando en ${this.apiUrl}`;
+        if (error.status === 401 || error.status === 403) {
+          this.error = 'Sesión expirada o no autorizada. Por favor inicie sesión nuevamente como administrador.';
+        } else if (error.status === 0) {
+          this.error = `No se pudo conectar con el servidor en ${this.apiUrl}. Verifique que el backend esté activo.`;
+        } else {
+          this.error = error.error?.message || `Error del servidor (${error.status}).`;
+        }
         this.loading = false;
         
         // NO usar datos de fallback - queremos que el usuario vea el error
