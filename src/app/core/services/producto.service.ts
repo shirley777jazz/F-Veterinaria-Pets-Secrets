@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 // Configuración de ambiente directa
 const environment = {
@@ -43,7 +44,32 @@ export interface ProductoRequest {
 export class ProductoService {
   private baseUrl = `${environment.apiUrl}/api`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  // Helper para headers con token JWT en peticiones JSON
+  private getHttpHeaders(): HttpHeaders {
+    const token = this.authService.getToken() || localStorage.getItem('authToken') || localStorage.getItem('token');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
+
+  // Helper para headers con token JWT en subida de archivos (FormData)
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken() || localStorage.getItem('authToken') || localStorage.getItem('token');
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
 
   // Métodos para productos
   getAllProductos(): Observable<Producto[]> {
@@ -75,37 +101,37 @@ export class ProductoService {
   }
 
   crearProducto(request: ProductoRequest): Observable<Producto> {
-    return this.http.post<Producto>(`${this.baseUrl}/productos`, request);
+    return this.http.post<Producto>(`${this.baseUrl}/productos`, request, { headers: this.getHttpHeaders() });
   }
 
   actualizarProducto(id: number, request: ProductoRequest): Observable<Producto> {
-    return this.http.put<Producto>(`${this.baseUrl}/productos/${id}`, request);
+    return this.http.put<Producto>(`${this.baseUrl}/productos/${id}`, request, { headers: this.getHttpHeaders() });
   }
 
   eliminarProducto(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/productos/${id}`);
+    return this.http.delete(`${this.baseUrl}/productos/${id}`, { headers: this.getHttpHeaders() });
   }
 
   actualizarStock(id: number, stock: number): Observable<Producto> {
     const params = new HttpParams().set('stock', stock.toString());
-    return this.http.put<Producto>(`${this.baseUrl}/productos/${id}/stock`, null, { params });
+    return this.http.put<Producto>(`${this.baseUrl}/productos/${id}/stock`, null, { params, headers: this.getHttpHeaders() });
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {
     const params = new HttpParams().set('estado', estado);
-    return this.http.patch(`${this.baseUrl}/productos/${id}/estado`, null, { params });
+    return this.http.patch(`${this.baseUrl}/productos/${id}/estado`, null, { params, headers: this.getHttpHeaders() });
   }
 
   // Métodos para manejo de archivos
   uploadImage(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.baseUrl}/files/upload-image`, formData);
+    return this.http.post(`${this.baseUrl}/files/upload-image`, formData, { headers: this.getAuthHeaders() });
   }
 
   deleteImage(filename: string): Observable<any> {
     const params = new HttpParams().set('filename', filename);
-    return this.http.delete(`${this.baseUrl}/files/delete-image`, { params });
+    return this.http.delete(`${this.baseUrl}/files/delete-image`, { params, headers: this.getHttpHeaders() });
   }
 
   // Métodos para categorías
@@ -118,15 +144,15 @@ export class ProductoService {
   }
 
   crearCategoria(request: { nombre: string; descripcion?: string }): Observable<Categoria> {
-    return this.http.post<Categoria>(`${this.baseUrl}/categorias`, request);
+    return this.http.post<Categoria>(`${this.baseUrl}/categorias`, request, { headers: this.getHttpHeaders() });
   }
 
   actualizarCategoria(id: number, request: { nombre: string; descripcion?: string }): Observable<Categoria> {
-    return this.http.put<Categoria>(`${this.baseUrl}/categorias/${id}`, request);
+    return this.http.put<Categoria>(`${this.baseUrl}/categorias/${id}`, request, { headers: this.getHttpHeaders() });
   }
 
   eliminarCategoria(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/categorias/${id}`);
+    return this.http.delete(`${this.baseUrl}/categorias/${id}`, { headers: this.getHttpHeaders() });
   }
 
   buscarCategorias(nombre: string): Observable<Categoria[]> {

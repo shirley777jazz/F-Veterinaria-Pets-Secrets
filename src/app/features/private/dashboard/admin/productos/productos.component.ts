@@ -175,13 +175,13 @@ export class ProductosComponent implements OnInit {
     }
 
     const request: ProductoRequest = {
-      nombre: this.productoForm.nombre,
-      descripcion: this.productoForm.descripcion,
-      precio: this.productoForm.precio,
-      categoriaId: this.productoForm.categoriaId,
-      imagenUrl: imagenUrl,
-      stock: this.productoForm.stock,
-      estado: this.productoForm.estado
+      nombre: this.productoForm.nombre.trim(),
+      descripcion: this.productoForm.descripcion || '',
+      precio: Number(this.productoForm.precio),
+      categoriaId: Number(this.productoForm.categoriaId),
+      imagenUrl: imagenUrl || '',
+      stock: Number(this.productoForm.stock) || 0,
+      estado: this.productoForm.estado || 'activo'
     };
 
     if (this.productoEditando) {
@@ -194,7 +194,8 @@ export class ProductosComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al actualizar producto:', error);
-          this.mostrarError('Error al actualizar el producto');
+          const errorMsg = error?.error?.message || error?.message || 'Error al actualizar el producto';
+          this.mostrarError(errorMsg);
         }
       });
     } else {
@@ -207,14 +208,15 @@ export class ProductosComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al crear producto:', error);
-          this.mostrarError('Error al crear el producto');
+          const errorMsg = error?.error?.message || error?.message || 'Error al crear el producto';
+          this.mostrarError(errorMsg);
         }
       });
     }
   }
 
   validarFormulario(): boolean {
-    if (!this.productoForm.nombre.trim()) {
+    if (!this.productoForm.nombre || !this.productoForm.nombre.trim()) {
       this.mostrarError('El nombre es obligatorio');
       return false;
     }
@@ -222,7 +224,7 @@ export class ProductosComponent implements OnInit {
       this.mostrarError('El precio debe ser mayor a 0');
       return false;
     }
-    if (this.productoForm.categoriaId === 0) {
+    if (!this.productoForm.categoriaId || Number(this.productoForm.categoriaId) === 0) {
       this.mostrarError('Debe seleccionar una categoría');
       return false;
     }
