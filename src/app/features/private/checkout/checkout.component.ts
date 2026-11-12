@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CarritoService, Carrito, CarritoItem } from '../../../core/services/carrito.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { PedidoService } from '../../../core/services/pedido.service';
+import { NotificacionService } from '../../../core/services/notificacion.service';
 import { PedidoRequest, MetodoPago } from '../../../core/models/pedido';
 import { Subscription } from 'rxjs';
 
@@ -34,6 +35,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private carritoService: CarritoService,
     private authService: AuthService,
     private pedidoService: PedidoService,
+    private notificacionService: NotificacionService,
     private router: Router
   ) {
     this.initializeComponent();
@@ -173,7 +175,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
       this.errorPago = 'Por favor, completa todos los campos requeridos correctamente.';
-      alert('Por favor, completa todos los campos requeridos correctamente (nombre, teléfono, dirección y datos de pago).');
+      this.notificacionService.mostrarAdvertencia(
+        'Por favor, completa todos los campos requeridos correctamente (nombre, teléfono, dirección y datos de pago).',
+        'Campos Incompletos',
+        undefined,
+        'Entendido'
+      );
       return;
     }
 
@@ -219,9 +226,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           }
         });
 
-        // Notificar al usuario y redirigir al catálogo de productos
-        alert('¡Pedido realizado con éxito! Tu pedido ha sido confirmado correctamente.');
-        this.router.navigate(['/productos']);
+        // Notificar al usuario con el modal de diseño Pets Secretz y redirigir al catálogo de productos
+        this.notificacionService.mostrarExito(
+          '¡Pedido realizado con éxito! Tu pedido ha sido confirmado correctamente y pronto estará en camino.',
+          '¡Pedido Confirmado!',
+          () => {
+            this.router.navigate(['/productos']);
+          },
+          'Ir a la Tienda'
+        );
       },
       error: (error) => {
         console.error('Error completo al procesar el pago:', error);

@@ -5,9 +5,18 @@
         <h5 class="pedido-id">Pedido #{{ pedido.id }}</h5>
         <p class="pedido-fecha text-muted">{{ formatearFecha(pedido.fechaPedido) }}</p>
       </div>
-      <span class="badge" [class]="getEstadoClass(pedido.estado)">
-        {{ getEstadoLabel(pedido.estado) }}
-      </span>
+      <div class="d-flex align-items-center gap-2">
+        <button type="button" 
+                class="btn-imprimir-icono" 
+                *ngIf="esEntregado()" 
+                (click)="onImprimir($event)" 
+                title="Imprimir comprobante PDF de entrega">
+          <i class="bi bi-printer-fill"></i>
+        </button>
+        <span class="badge" [class]="getEstadoClass(pedido.estado)">
+          {{ getEstadoLabel(pedido.estado) }}
+        </span>
+      </div>
     </div>
   </div>
   
@@ -47,10 +56,18 @@
     </div>
   </div>
   
-  <div class="pedido-actions mt-3">
-    <button class="btn btn-outline-primary btn-sm" (click)="onVerDetalles()">
+  <div class="pedido-actions mt-3 d-flex gap-2">
+    <button class="btn btn-outline-primary btn-sm flex-grow-1" (click)="onVerDetalles()">
       <i class="bi bi-eye me-1"></i>
       Ver Detalles
+    </button>
+    <button type="button" 
+            class="btn btn-primary btn-sm btn-imprimir-action d-flex align-items-center gap-1" 
+            *ngIf="esEntregado()" 
+            (click)="onImprimir($event)" 
+            title="Exportar comprobante PDF">
+      <i class="bi bi-printer-fill"></i>
+      <span>Imprimir PDF</span>
     </button>
   </div>
 </div>

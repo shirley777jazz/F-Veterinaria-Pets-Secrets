@@ -106,6 +106,7 @@
                     <tr>
                         <th>Producto</th>
                         <th>Categoría</th>
+                        <th>Sede</th>
                         <th>Precio</th>
                         <th>Stock</th>
                         <th>Estado</th>
@@ -134,6 +135,12 @@
                             <span class="categoria-badge" [class]="getCategoryBadgeClass(producto.categoria.nombre)">
                                 {{ producto.categoria.nombre }}
                             </span>
+                        </td>
+                        <td class="sede-cell">
+                            <span class="sede-badge" *ngIf="producto.sede">
+                                <i class="bi bi-geo-alt-fill me-1"></i>{{ producto.sede.nombre }}
+                            </span>
+                            <span class="text-muted fst-italic" *ngIf="!producto.sede">Sin sede</span>
                         </td>
                         <td class="precio-cell">{{ formatPrice(producto.precio) }}</td>
                         <td class="stock-cell">{{ producto.stock }}</td>
@@ -242,12 +249,21 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="estado">Estado del producto</label>
-                <select id="estado" [(ngModel)]="productoForm.estado" name="estado" required>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sede">Sede Asignada</label>
+                    <select id="sede" [(ngModel)]="productoForm.sedeId" name="sede">
+                        <option [ngValue]="null">Seleccionar sede</option>
+                        <option *ngFor="let sede of sedes" [value]="sede.id">{{ sede.nombre }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado del producto</label>
+                    <select id="estado" [(ngModel)]="productoForm.estado" name="estado" required>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
             </div>
 
             <div class="modal-actions">

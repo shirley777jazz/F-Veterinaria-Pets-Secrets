@@ -15,6 +15,7 @@ export interface MiPedido {
   direccionEntrega: string;
   metodoPago: string;
   fechaEntrega?: Date | string;
+  pedidoOriginal?: any;
 }
 @Component({
   selector: 'app-mi-pedido-card',
@@ -26,6 +27,7 @@ export interface MiPedido {
 export class MiPedidoCardComponent {
   @Input() pedido!: MiPedido;
   @Output() verDetalles = new EventEmitter<MiPedido>();
+  @Output() imprimir = new EventEmitter<MiPedido>();
 
   formatearFecha(fecha: Date | string | undefined): string {
     if (!fecha) return '';
@@ -45,21 +47,33 @@ export class MiPedidoCardComponent {
     }
   }
 
+  esEntregado(): boolean {
+    return (this.pedido?.estado || '').toLowerCase() === 'entregado';
+  }
+
+  onImprimir(event: Event): void {
+    event.stopPropagation();
+    this.imprimir.emit(this.pedido);
+  }
+
   getEstadoClass(estado: string): string {
     switch (estado?.toLowerCase()) {
       case 'entregado':
-        return 'bg-success';
+        return 'bg-success text-white';
+      case 'procesando':
       case 'en_proceso':
       case 'en proceso':
-        return 'bg-warning';
+      case 'en_preparacion':
+      case 'confirmado':
+        return 'bg-warning text-dark';
       case 'enviado':
-        return 'bg-info';
+        return 'bg-info text-white';
       case 'cancelado':
-        return 'bg-danger';
+        return 'bg-danger text-white';
       case 'pendiente':
-        return 'bg-secondary';
+        return 'bg-secondary text-white';
       default:
-        return 'bg-primary';
+        return 'bg-primary text-white';
     }
   }
 
@@ -67,9 +81,12 @@ export class MiPedidoCardComponent {
     switch (estado?.toLowerCase()) {
       case 'entregado':
         return 'Entregado';
+      case 'procesando':
       case 'en_proceso':
       case 'en proceso':
-        return 'En Proceso';
+      case 'en_preparacion':
+      case 'confirmado':
+        return 'Procesando';
       case 'enviado':
         return 'Enviado';
       case 'cancelado':

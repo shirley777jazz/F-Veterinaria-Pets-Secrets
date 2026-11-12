@@ -54,6 +54,7 @@
                         <th>Raza</th>
                         <th>Género</th>
                         <th>Edad</th>
+                        <th>Sede</th>
                         <th>Estado de Adopción</th>
                         <th>Fecha de Ingreso</th>
                         <th>Acciones</th>
@@ -80,6 +81,12 @@
                         <td class="raza-cell">{{ mascota.raza }}</td>
                         <td class="genero-cell">{{ mascota.genero }}</td>
                         <td class="edad-cell">{{ mascota.edad }} {{ mascota.edad === 1 ? 'año' : 'años' }}</td>
+                        <td class="sede-cell">
+                            <span class="sede-badge" *ngIf="mascota.sedeNombre">
+                                <i class="bi bi-geo-alt-fill me-1"></i>{{ mascota.sedeNombre }}
+                            </span>
+                            <span class="text-muted fst-italic" *ngIf="!mascota.sedeNombre">Sin sede</span>
+                        </td>
                         <td class="estado-cell">
                             <span class="estado-badge" [class]="getBadgeClass(mascota.estadoAdopcion)">
                                 {{ obtenerNombreEstado(mascota.estadoAdopcion) }}
@@ -160,6 +167,13 @@
                         <label>Tipo</label>
                         <select [(ngModel)]="mascotaForm.tipo" name="tipo">
                             <option value="adopcion">Adopción</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sede Asignada</label>
+                        <select [(ngModel)]="mascotaForm.sedeId" name="sedeId">
+                            <option [ngValue]="undefined">Seleccionar sede</option>
+                            <option *ngFor="let sede of sedes" [value]="sede.id">{{ sede.nombre }}</option>
                         </select>
                     </div>
                 </div>

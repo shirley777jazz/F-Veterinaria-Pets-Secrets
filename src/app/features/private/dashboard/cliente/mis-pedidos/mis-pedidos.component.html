@@ -34,7 +34,9 @@
     <!-- Lista de pedidos -->
     <div class="row" *ngIf="pedidos.length > 0 && !cargandoPedidos">
         <div class="col-12 col-md-6 col-lg-6 col-xl-4 mb-4" *ngFor="let pedido of pedidos">
-            <app-mi-pedido-card [pedido]="transformPedido(pedido)" (verDetalles)="verDetallesPedido($event)">
+            <app-mi-pedido-card [pedido]="transformPedido(pedido)" 
+                               (verDetalles)="verDetallesPedido($event)"
+                               (imprimir)="imprimirComprobante($event)">
             </app-mi-pedido-card>
         </div>
     </div>
@@ -214,9 +216,17 @@
             </div>
         </div>
 
-        <div class="modal-actions">
+        <div class="modal-actions d-flex justify-content-between align-items-center">
+            <button type="button" 
+                    class="btn btn-primary d-flex align-items-center gap-2" 
+                    *ngIf="esEntregado(pedidoDetalle?.estado)" 
+                    (click)="imprimirDetalleActual()">
+                <i class="bi bi-printer-fill"></i>
+                Exportar Comprobante PDF
+            </button>
+            <div *ngIf="!esEntregado(pedidoDetalle?.estado)"></div>
             <button type="button" class="btn-cerrar-detalle" (click)="cerrarDetalle()">
-                <i class="bi bi-x-circle"></i>
+                <i class="bi bi-x-circle me-1"></i>
                 Cerrar
             </button>
         </div>

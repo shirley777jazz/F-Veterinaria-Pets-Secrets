@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MiPedido, MiPedidoCardComponent } from '../../../../../shared/components/mi-pedido-card/mi-pedido-card.component';
 import { AuthService } from '../../../../../core/services/auth.service';
+import { PdfPedidoService } from '../../../../../core/services/pdf-pedido.service';
 import { PedidosService, PedidoDetalle } from '../../../../../core/services/pedidos.service';
 
 @Component({
@@ -24,7 +25,8 @@ export class MisPedidosComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private pedidosService: PedidosService
+    private pedidosService: PedidosService,
+    private pdfPedidoService: PdfPedidoService
   ) {}
 
   ngOnInit(): void {
@@ -74,21 +76,38 @@ export class MisPedidosComponent implements OnInit {
       })),
       direccionEntrega: pedido.direccion,
       metodoPago: pedido.metodoPago,
-      fechaEntrega: pedido.fechaEntrega ? (parsearFechaObj(pedido.fechaEntrega) || undefined) : undefined
+      fechaEntrega: pedido.fechaEntrega ? (parsearFechaObj(pedido.fechaEntrega) || undefined) : undefined,
+      pedidoOriginal: pedido
     };
   }
 
-  private mapearEstado(estadoBackend: string): 'pendiente' | 'en_proceso' | 'enviado' | 'entregado' | 'cancelado' {
-    const mapeoEstados: { [key: string]: 'pendiente' | 'en_proceso' | 'enviado' | 'entregado' | 'cancelado' } = {
-      'PENDIENTE': 'pendiente',
-      'CONFIRMADO': 'en_proceso',
-      'EN_PREPARACION': 'en_proceso',
-      'ENVIADO': 'enviado',
-      'ENTREGADO': 'entregado',
-      'CANCELADO': 'cancelado'
-    };
-    
-    return mapeoEstados[estadoBackend.toUpperCase()] || 'pendiente';
+  private mapearEstado(estadoBackend: string): string {
+    const estado = (estadoBackend || '').trim().toLowerCase();
+    if (estado === 'procesando' || estado === 'en_proceso' || estado === 'en proceso' || estado === 'confirmado' || estado === 'en_preparacion') {
+      return 'procesando';
+    }
+    if (estado === 'entregado') return 'entregado';
+    if (estado === 'enviado') return 'enviado';
+    if (estado === 'cancelado') return 'cancelado';
+    if (estado === 'pendiente') return 'pendiente';
+    return estado || 'pendiente';
+  }
+
+  esEntregado(estado?: string): boolean {
+    return (estado || '').toLowerCase() === 'entregado';
+  }
+
+  imprimirComprobante(miPedido: MiPedido): void {
+    const pedidoCompleto = this.pedidos.find(p => p.id.toString() === miPedido.id) || miPedido.pedidoOriginal;
+    if (pedidoCompleto) {
+      this.pdfPedidoService.exportarComprobantePedido(pedidoCompleto, this.usuarioActual);
+    }
+  }
+
+  imprimirDetalleActual(): void {
+    if (this.pedidoDetalle) {
+      this.pdfPedidoService.exportarComprobantePedido(this.pedidoDetalle, this.usuarioActual);
+    }
   }
 
   cerrarDetalle(): void {
@@ -158,7 +177,8 @@ export class MisPedidosComponent implements OnInit {
   getEstadoBadgeClass(estado: string): string {
     switch (estado?.toUpperCase()) {
       case 'PENDIENTE': return 'status-pendiente';
-      case 'CONFIRMADO': return 'status-confirmado';
+      case 'PROCESANDO': return 'status-procesando';
+      case 'CONFIRMADO': return 'status-procesando';
       case 'EN_PREPARACION': return 'status-procesando';
       case 'ENVIADO': return 'status-enviado';
       case 'ENTREGADO': return 'status-entregado';
@@ -171,7 +191,8 @@ export class MisPedidosComponent implements OnInit {
   getEstadoTexto(estado: string): string {
     switch (estado?.toUpperCase()) {
       case 'PENDIENTE': return 'Pendiente';
-      case 'CONFIRMADO': return 'Confirmado';
+      case 'PROCESANDO': return 'Procesando';
+      case 'CONFIRMADO': return 'Procesando';
       case 'EN_PREPARACION': return 'En Preparación';
       case 'ENVIADO': return 'Enviado';
       case 'ENTREGADO': return 'Entregado';
