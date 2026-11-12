@@ -1,3 +1,4 @@
+import { formatearFecha as utilsFormatearFecha } from '../../../core/utils/date-utils';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

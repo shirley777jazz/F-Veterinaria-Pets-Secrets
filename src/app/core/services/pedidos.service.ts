@@ -1,3 +1,4 @@
+import { formatearFecha as utilsFormatearFecha } from '../utils/date-utils';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -95,41 +96,11 @@ export class PedidosService {
   }
 
   // Método auxiliar para formatear fechas
-  formatearFecha(fecha: string): string {
-    if (!fecha) return '';
-    
-    // Si es string en formato YYYY-MM-DD, crear fecha sin problemas de zona horaria
-    if (typeof fecha === 'string' && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      const [year, month, day] = fecha.split('-');
-      const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long', 
-        day: 'numeric'
-      });
-    }
-    
-    // Si es string en formato ISO, extraer solo la fecha
-    if (typeof fecha === 'string' && fecha.includes('T')) {
-      const fechaSolo = fecha.split('T')[0];
-      const [year, month, day] = fechaSolo.split('-');
-      const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-    
-    // Para otros casos, usar directamente pero sin hora para evitar problemas
-    return new Date(fecha).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  formatearFecha(fecha: any): string {
+    return utilsFormatearFecha(fecha);
   }
 
-  // Método auxiliar para obtener color del estado
+    // Método auxiliar para obtener color del estado
   getColorEstado(estado: string): string {
     const colores: { [key: string]: string } = {
       'PENDIENTE': '#f59e0b',

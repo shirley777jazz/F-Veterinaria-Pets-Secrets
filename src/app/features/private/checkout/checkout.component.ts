@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CarritoService, Carrito, CarritoItem } from '../../../core/services/carrito.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { PedidoService } from '../../../core/services/pedido.service';
@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css'
 })
@@ -63,7 +63,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       codigoPostal: [''],
       metodoPago: ['yape', Validators.required],
       // Campos de pago - se configurarán las validaciones dinámicamente
-      numeroYape: [''],
+      numeroYape: [usuarioActual?.telefono || ''],
       numeroTarjeta: [''],
       fechaVencimiento: [''],
       cvv: ['']
@@ -129,11 +129,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     if (this.mostrarYape) {
       // Validaciones para YAPE
+      const telefonoVal = this.checkoutForm.get('telefono')?.value;
+      if (!this.checkoutForm.get('numeroYape')?.value && telefonoVal) {
+        this.checkoutForm.get('numeroYape')?.setValue(telefonoVal);
+      }
       this.checkoutForm.get('numeroYape')?.setValidators([
         Validators.required,
-        Validators.pattern(/^9\d{8}$/)
+        Validators.pattern(/^\d{9}$/)
       ]);
       // Limpiar campos de tarjeta
+      this.checkoutForm.get('numeroTarjeta')?.clearValidators();
+      this.checkoutForm.get('fechaVencimiento')?.clearValidators();
+      this.checkoutForm.get('cvv')?.clearValidators();
       this.checkoutForm.get('numeroTarjeta')?.reset();
       this.checkoutForm.get('fechaVencimiento')?.reset();
       this.checkoutForm.get('cvv')?.reset();
@@ -164,19 +171,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   confirmarPago() {
     if (this.checkoutForm.invalid) {
-      console.error('Formulario inválido:', this.checkoutForm.errors);
-      console.error('Errores por campo:', {
-        nombre: this.checkoutForm.get('nombre')?.errors,
-        email: this.checkoutForm.get('email')?.errors,
-        telefono: this.checkoutForm.get('telefono')?.errors,
-        direccion: this.checkoutForm.get('direccion')?.errors,
-        metodoPago: this.checkoutForm.get('metodoPago')?.errors,
-        numeroYape: this.checkoutForm.get('numeroYape')?.errors,
-        numeroTarjeta: this.checkoutForm.get('numeroTarjeta')?.errors,
-        fechaVencimiento: this.checkoutForm.get('fechaVencimiento')?.errors,
-        cvv: this.checkoutForm.get('cvv')?.errors
-      });
+      this.checkoutForm.markAllAsTouched();
       this.errorPago = 'Por favor, completa todos los campos requeridos correctamente.';
+      alert('Por favor, completa todos los campos requeridos correctamente (nombre, teléfono, dirección y datos de pago).');
       return;
     }
 
@@ -221,6 +218,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             console.error('Error al vaciar carrito:', error);
           }
         });
+
+        // Notificar al usuario y redirigir al catálogo de productos
+        alert('¡Pedido realizado con éxito! Tu pedido ha sido confirmado correctamente.');
+        this.router.navigate(['/productos']);
       },
       error: (error) => {
         console.error('Error completo al procesar el pago:', error);

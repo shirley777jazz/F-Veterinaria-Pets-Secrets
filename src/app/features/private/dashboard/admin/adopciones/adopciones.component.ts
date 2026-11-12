@@ -1,3 +1,4 @@
+import { formatearFecha as utilsFormatearFecha } from '../../../../../core/utils/date-utils';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -207,13 +208,7 @@ export class AdopcionesComponent implements OnInit {
     }
   }
 
-  formatearFecha(fecha?: string | Date): string {
-    if (!fecha) return '';
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+  formatearFecha(fecha?: any): string {
+    return utilsFormatearFecha(fecha);
   }
 }
