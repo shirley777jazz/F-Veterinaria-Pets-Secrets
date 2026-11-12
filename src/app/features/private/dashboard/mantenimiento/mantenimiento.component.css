@@ -1,0 +1,138 @@
+.mantenimiento-container {
+  max-width: 1200px;
+  margin: 1.5rem auto 3rem auto;
+  padding: 0.5rem 1rem;
+}
+
+.text-primary-custom {
+  color: var(--azul, #1A4E8D);
+}
+
+.header-icon-box {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, var(--azul, #1A4E8D) 0%, var(--azul-claro, #2B78E4) 100%);
+  box-shadow: 0 4px 12px rgba(26, 78, 141, 0.25);
+}
+
+/* Tarjeta informativa de navegación por teclado */
+.a11y-guide-card {
+  background: #f0f7ff;
+  border-left: 4px solid var(--azul, #1A4E8D) !important;
+}
+
+/* Tarjetas de opciones interactivas */
+.option-card {
+  background-color: var(--blanco, #ffffff);
+  border: 2px solid #e2e8f0 !important;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  user-select: none;
+}
+
+.option-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--azul-claro, #2B78E4) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Estado activo */
+.option-card.active {
+  border-color: var(--azul, #1A4E8D) !important;
+  background-color: #f6faff;
+  box-shadow: 0 0 0 1px var(--azul, #1A4E8D), 0 6px 18px rgba(26, 78, 141, 0.15);
+}
+
+/* Enfoque accesible para la tecla TAB */
+.option-card:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--azul, #1A4E8D) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 4px rgba(26, 78, 141, 0.3) !important;
+}
+
+.option-icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #eef5ff;
+  color: var(--azul, #1A4E8D);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option-card.active .option-icon {
+  background: var(--azul, #1A4E8D);
+  color: #ffffff;
+}
+
+.icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sample-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: var(--azul, #1A4E8D) !important;
+}
+
+.sample-box {
+  background: var(--blanco, #ffffff);
+  border-color: #e2e8f0 !important;
+}
+
+.preview-card {
+  background: var(--blanco, #ffffff);
+  z-index: 10 !important;
+}
+
+/* Adaptaciones para modo oscuro en el propio módulo */
+:host-context(html[data-theme="oscuro"]) .a11y-guide-card {
+  background: #172554 !important;
+  border-left-color: #60a5fa !important;
+}
+
+:host-context(html[data-theme="oscuro"]) .option-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc;
+}
+
+:host-context(html[data-theme="oscuro"]) .option-card.active {
+  background-color: #1e3a5f !important;
+  border-color: #60a5fa !important;
+}
+
+:host-context(html[data-theme="oscuro"]) .option-icon {
+  background: #334155 !important;
+  color: #93c5fd !important;
+}
+
+:host-context(html[data-theme="oscuro"]) .option-card.active .option-icon {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+:host-context(html[data-theme="oscuro"]) .sample-box {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+:host-context(html[data-theme="oscuro"]) .settings-summary {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+:host-context(html[data-theme="oscuro"]) .option-card:focus-visible,
+:host-context(html[data-theme="oscuro"]) button:focus-visible {
+  outline: 3px solid #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.4) !important;
+}

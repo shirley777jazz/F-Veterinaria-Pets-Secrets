@@ -21,7 +21,8 @@ export class UsuarioComponent implements OnInit {
     { title: 'Mis Mascotas', route: '/usuario/mascotas', icon: 'bi-heart' },
     { title: 'Mis Citas', route: '/usuario/citas', icon: 'bi-calendar-event' },
     { title: 'Mis Adopciones', route: '/usuario/adopciones', icon: 'bi-heart-fill' },
-    { title: 'Mis Pedidos', route: '/usuario/pedidos', icon: 'bi-bag' }
+    { title: 'Mis Pedidos', route: '/usuario/pedidos', icon: 'bi-bag' },
+    { title: 'Mantenimiento', route: '/usuario/mantenimiento', icon: 'bi-gear-wide-connected' }
   ];
 
   constructor(
