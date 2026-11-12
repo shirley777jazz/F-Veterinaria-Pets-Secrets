@@ -1,3 +1,4 @@
+import { formatearFecha as utilsFormatearFecha } from '../../../core/utils/date-utils';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -7,10 +8,10 @@ export interface MiAdopcion {
   raza: string;
   edad: number;
   foto: string;
-  fechaSolicitud: Date | string;
+  fechaSolicitud: any;
   estado: string;
-  fechaAprobacion?: Date | string;
-  fechaEntrega?: Date | string;
+  fechaAprobacion?: any;
+  fechaEntrega?: any;
   observaciones?: string;
 }
 
@@ -26,25 +27,11 @@ export class MiAdopcionCardComponent {
   @Output() verDetalles = new EventEmitter<MiAdopcion>();
   @Output() cancelar = new EventEmitter<MiAdopcion>();
 
-  formatearFecha(fecha: Date | string | undefined): string {
-    if (!fecha) return '';
-    
-    try {
-      const fechaObj = typeof fecha === 'string' ? new Date(fecha) : fecha;
-      if (isNaN(fechaObj.getTime())) return '';
-      
-      return fechaObj.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    } catch (error) {
-      console.error('Error al formatear fecha:', error);
-      return '';
-    }
+  formatearFecha(fecha: any): string {
+    return utilsFormatearFecha(fecha);
   }
 
-  getEstadoClass(estado: string): string {
+    getEstadoClass(estado: string): string {
     switch (estado?.toLowerCase()) {
       case 'aprobada':
       case 'entregada':

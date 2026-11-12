@@ -1,3 +1,4 @@
+import { formatearFecha as utilsFormatearFecha, parsearFechaObj } from '../../../../../core/utils/date-utils';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -162,55 +163,19 @@ export class MisAdopcionesComponent implements OnInit {
     this.cargarAdopcionesUsuario();
   }
 
-  formatearFecha(fecha: Date | string | undefined): string {
-    console.log('formatearFecha recibió:', fecha, 'tipo:', typeof fecha);
-    
-    if (!fecha) return '';
-    
-    try {
-      let fechaObj: Date;
-      
-      if (typeof fecha === 'string') {
-        // Si es string, puede ser formato ISO o formato 'YYYY-MM-DD'
-        if (fecha.includes('-') && fecha.length === 10) {
-          const partes = fecha.split('-');
-          fechaObj = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
-        } else {
-          fechaObj = new Date(fecha);
-        }
-      } else if (fecha instanceof Date) {
-        fechaObj = fecha;
-      } else {
-        console.error('Tipo de fecha no reconocido:', typeof fecha, fecha);
-        return '';
-      }
-      
-      if (isNaN(fechaObj.getTime())) {
-        console.error('Fecha inválida después de conversión:', fechaObj);
-        return '';
-      }
-      
-      return fechaObj.toLocaleDateString('es-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    } catch (error) {
-      console.error('Error al formatear fecha:', error, 'fecha original:', fecha);
-      return '';
-    }
+  formatearFecha(fecha: any): string {
+    return utilsFormatearFecha(fecha, 'largo');
   }
 
-  transformAdopcion(adopcion: AdopcionResponse): MiAdopcion {
+    transformAdopcion(adopcion: AdopcionResponse): MiAdopcion {
     return {
       id: adopcion.id.toString(),
       nombreMascota: adopcion.mascotaNombre || 'Nombre no disponible',
       raza: adopcion.mascotaRaza || 'No especificada',
       edad: this.calcularEdadMascota(adopcion.mascotaId), // Calcular edad basándose en datos disponibles
       foto: adopcion.mascotaFotoUrl || '/assets/general/perro.webp', // Imagen por defecto
-      fechaSolicitud: new Date(adopcion.fechaSolicitud),
-      fechaAprobacion: adopcion.fechaAprobacion ? new Date(adopcion.fechaAprobacion) : undefined,
+      fechaSolicitud: parsearFechaObj(adopcion.fechaSolicitud) || new Date(),
+      fechaAprobacion: adopcion.fechaAprobacion ? (parsearFechaObj(adopcion.fechaAprobacion) || undefined) : undefined,
       estado: this.mapearEstadoBackendAFrontend(adopcion.estado.toString()),
       observaciones: this.obtenerMensajePorEstado(adopcion.estado.toString())
     };

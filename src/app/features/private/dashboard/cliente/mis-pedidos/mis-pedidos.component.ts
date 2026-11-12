@@ -1,3 +1,4 @@
+import { formatearFecha as utilsFormatearFecha, parsearFechaObj } from '../../../../../core/utils/date-utils';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -63,7 +64,7 @@ export class MisPedidosComponent implements OnInit {
   transformPedido(pedido: PedidoDetalle): MiPedido {
     return {
       id: pedido.id.toString(),
-      fechaPedido: new Date(pedido.fechaPedido),
+      fechaPedido: parsearFechaObj(pedido.fechaPedido) || new Date(),
       estado: this.mapearEstado(pedido.estado),
       total: pedido.total,
       productos: pedido.detalles.map(detalle => ({
@@ -73,7 +74,7 @@ export class MisPedidosComponent implements OnInit {
       })),
       direccionEntrega: pedido.direccion,
       metodoPago: pedido.metodoPago,
-      fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega) : undefined
+      fechaEntrega: pedido.fechaEntrega ? (parsearFechaObj(pedido.fechaEntrega) || undefined) : undefined
     };
   }
 
@@ -134,11 +135,11 @@ export class MisPedidosComponent implements OnInit {
     return this.pedidosService.getColorEstado(estado);
   }
 
-  formatearFecha(fecha: string): string {
-    return this.pedidosService.formatearFecha(fecha);
+  formatearFecha(fecha: any): string {
+    return utilsFormatearFecha(fecha);
   }
 
-  // Método para mostrar mensaje de carga
+    // Método para mostrar mensaje de carga
   get mostrarMensajeCarga(): boolean {
     return this.cargandoPedidos && this.pedidos.length === 0;
   }

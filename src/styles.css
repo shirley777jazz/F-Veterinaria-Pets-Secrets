@@ -229,3 +229,48 @@ html[data-contrast="alto"] [tabindex]:focus-visible {
     outline-offset: 3px !important;
     box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.4) !important;
 }
+
+
+/* Footer en modo oscuro - asegurar contraste y visibilidad idéntica a Información de Contacto */
+html[data-theme="oscuro"] .footer,
+html[data-theme="oscuro"] footer {
+    background-color: #141e30 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] .footer a,
+html[data-theme="oscuro"] footer a {
+    color: #cbd5e1 !important;
+    text-decoration: none;
+}
+
+html[data-theme="oscuro"] .footer a:hover,
+html[data-theme="oscuro"] footer a:hover {
+    color: #38bdf8 !important;
+    text-decoration: underline;
+}
+
+html[data-theme="oscuro"] .footer i,
+html[data-theme="oscuro"] footer i {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="oscuro"] .footer i:hover,
+html[data-theme="oscuro"] footer i:hover {
+    color: #38bdf8 !important;
+}
+
+html[data-theme="oscuro"] .footer .title-footer,
+html[data-theme="oscuro"] footer .title-footer {
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+html[data-theme="oscuro"] .footer ul li,
+html[data-theme="oscuro"] footer ul li,
+html[data-theme="oscuro"] .footer p,
+html[data-theme="oscuro"] footer p,
+html[data-theme="oscuro"] .footer span,
+html[data-theme="oscuro"] footer span {
+    color: #cbd5e1 !important;
+}

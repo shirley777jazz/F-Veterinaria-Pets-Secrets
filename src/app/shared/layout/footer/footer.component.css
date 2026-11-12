@@ -1,6 +1,6 @@
 .footer {
     background-color: var(--azul);
-    color: var(--blanco);
+    color: #ffffff;
     padding-top: 2rem;
     padding-bottom: 1.5rem;
     position: relative;
@@ -14,7 +14,7 @@
 
             &:hover {
                 color: var(--azul);
-                background-color: var(--blanco);
+                background-color: #ffffff;
                 border-radius: 10px;
                 padding: 3px;
             }
@@ -28,7 +28,7 @@
 }
 
 .footer a {
-    color: var(--blanco);
+    color: #ffffff;
     text-decoration: none;
 
     &:hover {
@@ -62,7 +62,7 @@
 
 .footer i {
     font-size: 2rem;
-    color: var(--blanco);
+    color: #ffffff;
     transition: color 0.3s;
 
     &:hover {
