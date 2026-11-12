@@ -60,7 +60,7 @@
               <select class="form-select" [(ngModel)]="formulario.servicioId" name="servicioId" required>
                 <option value="0">Selecciona el servicio</option>
                 <option *ngFor="let servicio of servicios" [value]="servicio.id">
-                  {{ servicio.nombre }} - ${{ servicio.precio }}
+                  {{ servicio.nombre }} - S/ {{ servicio.precio }}
                 </option>
               </select>
             </div>

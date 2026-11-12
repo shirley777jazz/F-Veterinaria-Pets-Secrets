@@ -64,9 +64,14 @@ export class ServicioFormularioComponent implements OnInit {
     this.cargando = true;
     this.error = null;
     
+    const esAdmin = this.authService.getCurrentUser()?.rol === 'admin';
+    const mascotasObs = esAdmin
+      ? this.mascotaService.obtenerTodasLasMascotas()
+      : this.mascotaService.obtenerMisMascotas();
+
     // Cargar mis mascotas, servicios y sedes en paralelo
     Promise.all([
-      this.mascotaService.obtenerMisMascotas().toPromise(),
+      mascotasObs.toPromise(),
       this.citaService.obtenerServicios().toPromise(),
       this.citaService.obtenerSedes().toPromise()
     ]).then(([mascotas, servicios, sedes]) => {
@@ -94,9 +99,9 @@ export class ServicioFormularioComponent implements OnInit {
 
     // Crear request para el backend
     const citaRequest: CitaRequest = {
-      mascotaId: this.formulario.mascotaId,
-      servicioId: this.formulario.servicioId,
-      sedeId: this.formulario.sedeId,
+      mascotaId: Number(this.formulario.mascotaId),
+      servicioId: Number(this.formulario.servicioId),
+      sedeId: Number(this.formulario.sedeId),
       fecha: this.formulario.fecha,
       hora: this.formulario.hora,
       notas: this.formulario.notas || ''
@@ -109,9 +114,10 @@ export class ServicioFormularioComponent implements OnInit {
         this.exito = true;
         this.enviando = false;
         
-        // Redirigir a mis citas después de 2 segundos
+        // Redirigir según rol después de 2 segundos
+        const esAdmin = this.authService.getCurrentUser()?.rol === 'admin';
         setTimeout(() => {
-          this.router.navigate(['/usuario/citas']);
+          this.router.navigate([esAdmin ? '/admin/citas' : '/usuario/citas']);
         }, 2000);
       },
       error: (error) => {
@@ -126,15 +132,15 @@ export class ServicioFormularioComponent implements OnInit {
    * Validar formulario
    */
   validarFormulario(): boolean {
-    if (!this.formulario.mascotaId) {
+    if (!this.formulario.mascotaId || Number(this.formulario.mascotaId) === 0) {
       this.error = 'Debe seleccionar una mascota';
       return false;
     }
-    if (!this.formulario.servicioId) {
+    if (!this.formulario.servicioId || Number(this.formulario.servicioId) === 0) {
       this.error = 'Debe seleccionar un servicio';
       return false;
     }
-    if (!this.formulario.sedeId) {
+    if (!this.formulario.sedeId || Number(this.formulario.sedeId) === 0) {
       this.error = 'Debe seleccionar una sede';
       return false;
     }

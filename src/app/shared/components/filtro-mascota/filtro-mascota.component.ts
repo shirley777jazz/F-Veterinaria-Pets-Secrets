@@ -1,7 +1,8 @@
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component , EventEmitter, Output} from '@angular/core';
+import { Component , EventEmitter, OnInit, Output} from '@angular/core';
 import { FiltroAdopcion } from '../../../core/models/filtro-mascota';
+import { CitaService, Sede } from '../../../core/services/cita.service';
 
 @Component({
   selector: 'app-filtro-mascota',
@@ -10,12 +11,28 @@ import { FiltroAdopcion } from '../../../core/models/filtro-mascota';
   templateUrl: './filtro-mascota.component.html',
   styleUrl: './filtro-mascota.component.css',
 })
-export class FiltroMascotaComponent {
+export class FiltroMascotaComponent implements OnInit {
   @Output() filtrosCambiados = new EventEmitter<FiltroAdopcion>();
   @Output() limpiarFiltrosEvent = new EventEmitter<void>();
 
+  sedes: Sede[] = [];
+
+  constructor(private citaService: CitaService) {}
+
+  ngOnInit(): void {
+    this.citaService.obtenerSedes().subscribe({
+      next: (sedes) => {
+        this.sedes = sedes;
+      },
+      error: (err) => {
+        console.error('Error al cargar sedes:', err);
+      }
+    });
+  }
+
   // Filtros
   filtros: FiltroAdopcion = {
+    sede: 'Todas las sedes',
     especie: 'Todas las especies',
     tamano: 'Todos los tamaños',
     genero: 'Todos los géneros',
@@ -28,6 +45,7 @@ export class FiltroMascotaComponent {
 
   // Valores por defecto para limpiar filtros
   filtrosPorDefecto: FiltroAdopcion = {
+    sede: 'Todas las sedes',
     especie: 'Todas las especies',
     tamano: 'Todos los tamaños',
     genero: 'Todos los géneros',
@@ -64,6 +82,7 @@ export class FiltroMascotaComponent {
 
   tieneFiltrosActivos(): boolean {
     return (
+      this.filtros.sede !== this.filtrosPorDefecto.sede ||
       this.filtros.especie !== this.filtrosPorDefecto.especie ||
       this.filtros.tamano !== this.filtrosPorDefecto.tamano ||
       this.filtros.genero !== this.filtrosPorDefecto.genero ||

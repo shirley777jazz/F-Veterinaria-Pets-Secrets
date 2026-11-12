@@ -8,6 +8,7 @@ import { AdopcionService, AdopcionRequest } from '../../../../core/services/adop
 import { MascotaCardComponent } from '../../../../shared/components/mascota-card/mascota-card.component';
 import { FiltroMascotaComponent } from '../../../../shared/components/filtro-mascota/filtro-mascota.component';
 import { AuthService } from '../../../../core/services/auth.service';
+import { CitaService, Sede } from '../../../../core/services/cita.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -20,6 +21,7 @@ import { Router } from '@angular/router';
 export class AdopcionComponent implements OnInit {
   mascotas: Mascota[] = [];
   mascotasFiltradas: Mascota[] = [];
+  sedes: Sede[] = [];
   loading = true;
   error = false;
   
@@ -44,11 +46,24 @@ export class AdopcionComponent implements OnInit {
     private mascotaService: MascotaService,
     private adopcionService: AdopcionService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private citaService: CitaService
   ) {}
 
   ngOnInit(): void {
     this.cargarMascotas();
+    this.cargarSedes();
+  }
+
+  cargarSedes(): void {
+    this.citaService.obtenerSedes().subscribe({
+      next: (sedes) => {
+        this.sedes = sedes;
+      },
+      error: (err) => {
+        console.error('Error al cargar sedes:', err);
+      }
+    });
   }
 
   cargarMascotas(): void {
@@ -98,6 +113,14 @@ export class AdopcionComponent implements OnInit {
   private mapearFiltrosParaBackend(filtros: FiltroAdopcion): any {
     const filtrosBackend: any = {};
     
+    // Mapear sede (solo si no es "Todas las sedes")
+    if (filtros.sede && filtros.sede !== 'Todas las sedes') {
+      const sedeEncontrada = this.sedes.find(s => s.nombre.toLowerCase() === filtros.sede?.toLowerCase());
+      if (sedeEncontrada) {
+        filtrosBackend.sedeId = sedeEncontrada.id;
+      }
+    }
+
     // Mapear especie (solo si no es "Todas las especies")
     if (filtros.especie && filtros.especie !== 'Todas las especies') {
       filtrosBackend.especie = filtros.especie.toUpperCase();
@@ -132,6 +155,13 @@ export class AdopcionComponent implements OnInit {
     console.log('Aplicando filtro local como fallback');
     
     this.mascotasFiltradas = this.mascotas.filter(mascota => {
+      // Filtro por sede
+      if (filtros.sede && filtros.sede !== 'Todas las sedes') {
+        if (mascota.sedeNombre?.toLowerCase() !== filtros.sede.toLowerCase()) {
+          return false;
+        }
+      }
+
       // Filtro por especie
       if (filtros.especie && filtros.especie !== 'Todas las especies') {
         if (mascota.especie.toLowerCase() !== filtros.especie.toLowerCase()) {

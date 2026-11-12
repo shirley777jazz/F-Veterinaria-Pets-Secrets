@@ -8,8 +8,11 @@
         <h6 class="product-name">{{producto.nombre}}</h6>
         <p class="product-price">S/{{producto.precio.toFixed(2)}}</p>
         <p class="product-description">{{producto.descripcion || 'Sin descripción disponible'}}</p>
-        <div class="stock-info">
+        <div class="stock-info d-flex justify-content-between align-items-center">
             <span class="stock-text">Stock: {{producto.stock}}</span>
+            <span class="text-muted small" *ngIf="producto.sede?.nombre">
+                <i class="bi bi-geo-alt"></i> {{producto.sede?.nombre}}
+            </span>
         </div>
         <button class="btn btn-primary add-to-cart-btn w-100" 
                 (click)="addToCart($event)"

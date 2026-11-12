@@ -1,4 +1,6 @@
 export interface FiltroAdopcion {
+  sede?: string;
+  sedeId?: number;
   especie: string;
   tamano: string;
   genero: string;

@@ -1,9 +1,10 @@
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Categoria, ProductoService } from '../../../core/services/producto.service';
+import { Categoria, Sede, ProductoService } from '../../../core/services/producto.service';
 
 export interface FilterValues {
+  sede: string;
   categoria: string;
   precioMinimo: number;
   precioMaximo: number;
@@ -20,9 +21,11 @@ export interface FilterValues {
 export class FiltroComponent implements OnInit {
   @Output() filtersChanged = new EventEmitter<FilterValues>();
 
+  sedes: Sede[] = [];
   categorias: Categoria[] = [];
   
   filters: FilterValues = {
+    sede: 'Todas las sedes',
     categoria: 'Todas las categorías',
     precioMinimo: 0,
     precioMaximo: 500,
@@ -36,6 +39,15 @@ export class FiltroComponent implements OnInit {
   }
 
   loadFilters(): void {
+    this.productoService.getAllSedes().subscribe({
+      next: (sedes) => {
+        this.sedes = sedes;
+      },
+      error: (error) => {
+        console.error('Error al cargar sedes:', error);
+      }
+    });
+
     this.productoService.getAllCategorias().subscribe({
       next: (categorias) => {
         this.categorias = categorias;
@@ -52,6 +64,7 @@ export class FiltroComponent implements OnInit {
 
   clearFilters(): void {
     this.filters = {
+      sede: 'Todas las sedes',
       categoria: 'Todas las categorías',
       precioMinimo: 0,
       precioMaximo: 500,

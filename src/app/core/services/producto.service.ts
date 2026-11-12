@@ -10,6 +10,14 @@ const environment = {
 };
 
 // Interfaces para el backend
+export interface Sede {
+  id: number;
+  nombre: string;
+  direccion?: string;
+  telefono?: string;
+  ciudad?: string;
+}
+
 export interface Categoria {
   id: number;
   nombre: string;
@@ -26,6 +34,7 @@ export interface Producto {
   estado: string;
   fechaCreacion: string;
   categoria: Categoria;
+  sede?: Sede;
 }
 
 export interface ProductoRequest {
@@ -36,6 +45,7 @@ export interface ProductoRequest {
   imagenUrl?: string;
   estado?: string;
   categoriaId: number;
+  sedeId?: number;
 }
 
 @Injectable({
@@ -137,6 +147,11 @@ export class ProductoService {
   // Métodos para categorías
   getAllCategorias(): Observable<Categoria[]> {
     return this.http.get<Categoria[]>(`${this.baseUrl}/categorias`);
+  }
+
+  // Métodos para sedes
+  getAllSedes(): Observable<Sede[]> {
+    return this.http.get<Sede[]>(`${this.baseUrl}/sedes`);
   }
 
   getCategoriaById(id: number): Observable<Categoria> {

@@ -18,6 +18,22 @@
 
   <form>
     <div class="mb-3">
+      <label for="sede" class="form-label">Sede</label>
+      <select
+        class="form-select"
+        id="sede"
+        [(ngModel)]="filtros.sede"
+        name="sede"
+        (change)="onFiltroChange()"
+      >
+        <option value="Todas las sedes">Todas las sedes</option>
+        <option *ngFor="let sede of sedes" [value]="sede.nombre">
+          {{ sede.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
       <label for="especie" class="form-label">Especie</label>
       <select
         class="form-select"

@@ -7,6 +7,16 @@
     </div>
 
     <div class="filter-section">
+        <label class="form-label fw-semibold">Sede</label>
+        <select class="form-select" [(ngModel)]="filters.sede" (change)="onFilterChange()">
+            <option value="Todas las sedes">Todas las sedes</option>
+            <option *ngFor="let sede of sedes" [value]="sede.nombre">
+                {{sede.nombre}}
+            </option>
+        </select>
+    </div>
+
+    <div class="filter-section">
         <label class="form-label fw-semibold">Categoría</label>
         <select class="form-select" [(ngModel)]="filters.categoria" (change)="onFilterChange()">
             <option value="Todas las categorías">Todas las categorías</option>

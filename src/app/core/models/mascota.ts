@@ -18,6 +18,8 @@ export interface Mascota {
   fechaAdopcion?: string;
   usuarioNombre?: string;
   usuarioId?: number;
+  sedeId?: number;
+  sedeNombre?: string;
 }
 
 export interface MascotaRequest {
@@ -34,6 +36,7 @@ export interface MascotaRequest {
   esterilizado?: boolean;
   buenoConNinos?: boolean;
   buenoConOtrasMascotas?: boolean;
+  sedeId?: number;
 }
 
 export interface MascotaEstadisticas {

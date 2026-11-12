@@ -49,6 +49,13 @@ export class ProductosComponent implements OnInit {
 
   private aplicarFiltros(filters: FilterValues): void {
     this.productosFiltrados = this.productos.filter(producto => {
+      // Filtro por sede
+      if (filters.sede && filters.sede !== 'Todas las sedes') {
+        if (!producto.sede || producto.sede.nombre !== filters.sede) {
+          return false;
+        }
+      }
+
       // Filtro por categoría
       if (filters.categoria !== 'Todas las categorías' && producto.categoria.nombre !== filters.categoria) {
         return false;

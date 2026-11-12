@@ -110,6 +110,7 @@ export class MascotaService {
     tipo?: string;
     vacunado?: boolean;
     esterilizado?: boolean;
+    sedeId?: number;
   }): Observable<Mascota[]> {
     let params = new HttpParams();
     

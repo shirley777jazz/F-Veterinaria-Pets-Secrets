@@ -199,7 +199,7 @@ export class CitasComponent implements OnInit, OnDestroy {
   }
 
   navegarAFormulario() {
-    this.router.navigate(['/private/admin/formulario']);
+    this.router.navigate(['/servicio-formulario']);
   }
 
   getEstadoClass(estado: string): string {
