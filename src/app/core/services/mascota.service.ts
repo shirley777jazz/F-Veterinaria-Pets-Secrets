@@ -33,6 +33,14 @@ export class MascotaService {
       );
   }
 
+  // Obtener todas las sedes
+  obtenerSedes(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8080/api/sedes')
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // Alias para compatibilidad con componentes existentes
   getMascotas(): Observable<Mascota[]> {
     return this.obtenerMascotasDisponibles();

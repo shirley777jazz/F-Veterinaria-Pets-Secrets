@@ -1,0 +1,43 @@
+<div class="alerta-backdrop" *ngIf="alerta" (click)="onBackdropClick($event)" role="dialog" aria-modal="true">
+  <div class="alerta-card" [ngClass]="alerta.tipo">
+    <!-- Botón cerrar superior -->
+    <button type="button" class="alerta-btn-cerrar" (click)="cancelar()" aria-label="Cerrar">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <!-- Icono del estado con halo de luz -->
+    <div class="alerta-icono-wrap" [ngClass]="alerta.tipo">
+      <div class="alerta-icono-halo"></div>
+      <div class="alerta-icono">
+        <i *ngIf="alerta.tipo === 'exito'" class="bi bi-check-circle-fill"></i>
+        <i *ngIf="alerta.tipo === 'advertencia'" class="bi bi-exclamation-triangle-fill"></i>
+        <i *ngIf="alerta.tipo === 'error'" class="bi bi-x-circle-fill"></i>
+        <i *ngIf="alerta.tipo === 'info'" class="bi bi-info-circle-fill"></i>
+        <i *ngIf="alerta.tipo === 'confirmar'" class="bi bi-question-circle-fill"></i>
+      </div>
+    </div>
+
+    <!-- Contenido de texto -->
+    <div class="alerta-body">
+      <h3 class="alerta-titulo">{{ alerta.titulo || (alerta.tipo === 'confirmar' ? 'Confirmar Acción' : 'Notificación') }}</h3>
+      <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="alerta-footer" [class.alerta-footer-doble]="alerta.tipo === 'confirmar'">
+      <button *ngIf="alerta.tipo === 'confirmar'" 
+              type="button" 
+              class="alerta-btn-cancelar" 
+              (click)="cancelar()">
+        {{ alerta.textoBotonCancelar || 'Cancelar' }}
+      </button>
+
+      <button type="button" 
+              class="alerta-btn-accion" 
+              (click)="aceptar()" 
+              autofocus>
+        {{ alerta.textoBoton || (alerta.tipo === 'confirmar' ? 'Confirmar' : 'Aceptar') }}
+      </button>
+    </div>
+  </div>
+</div>

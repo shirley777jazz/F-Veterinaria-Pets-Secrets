@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Mascota, MascotaRequest } from '../../../../../core/models/mascota';
 import { MascotaService } from '../../../../../core/services/mascota.service';
+import { NotificacionService } from '../../../../../core/services/notificacion.service';
 
 @Component({
   selector: 'app-mascotas',
@@ -14,6 +15,7 @@ import { MascotaService } from '../../../../../core/services/mascota.service';
 export class MascotasComponent implements OnInit {
   mascotas: Mascota[] = [];
   mascotasFiltradas: Mascota[] = [];
+  sedes: any[] = [];
   searchTerm: string = '';
   mostrarModal: boolean = false;
   mascotaEditando: Mascota | null = null;
@@ -31,16 +33,32 @@ export class MascotasComponent implements OnInit {
     tamano: 'mediano',
     descripcion: '',
     tipo: 'adopcion',
+    sedeId: undefined,
     vacunado: false,
     esterilizado: false,
     buenoConNinos: false,
     buenoConOtrasMascotas: false
   };
 
-  constructor(private mascotaService: MascotaService) {}
+  constructor(
+    private mascotaService: MascotaService,
+    private notificacionService: NotificacionService
+  ) {}
 
   ngOnInit(): void {
     this.cargarMascotas();
+    this.cargarSedes();
+  }
+
+  cargarSedes(): void {
+    this.mascotaService.obtenerSedes().subscribe({
+      next: (sedes) => {
+        this.sedes = sedes;
+      },
+      error: (error) => {
+        console.error('Error al cargar sedes:', error);
+      }
+    });
   }
 
   cargarMascotas(): void {
@@ -87,6 +105,7 @@ export class MascotasComponent implements OnInit {
       tamano: 'mediano',
       descripcion: '',
       tipo: 'adopcion',
+      sedeId: undefined,
       vacunado: false,
       esterilizado: false,
       buenoConNinos: false,
@@ -109,6 +128,7 @@ export class MascotasComponent implements OnInit {
       descripcion: mascota.descripcion || '',
       fotoUrl: mascota.fotoUrl || '',
       tipo: mascota.tipo,
+      sedeId: mascota.sedeId || undefined,
       vacunado: mascota.vacunado || false,
       esterilizado: mascota.esterilizado || false,
       buenoConNinos: mascota.buenoConNinos || false,
@@ -118,27 +138,35 @@ export class MascotasComponent implements OnInit {
   }
 
   eliminarMascota(mascota: Mascota): void {
-    if (confirm(`¿Estás seguro de eliminar a ${mascota.nombre}?`) && mascota.id) {
-      this.loading = true;
-      this.mascotaService.eliminarMascota(mascota.id).subscribe({
-        next: () => {
-          this.mascotas = this.mascotas.filter(m => m.id !== mascota.id);
-          this.filtrarMascotas();
-          this.loading = false;
-          alert('Mascota eliminada exitosamente');
-        },
-        error: (error) => {
-          console.error('Error al eliminar mascota:', error);
-          alert('Error al eliminar la mascota. Intente nuevamente.');
-          this.loading = false;
-        }
-      });
-    }
+    if (!mascota.id) return;
+    this.notificacionService.confirmar(
+      `¿Estás seguro de eliminar a ${mascota.nombre}? Esta acción no se puede deshacer.`,
+      'Eliminar Mascota',
+      () => {
+        this.loading = true;
+        this.mascotaService.eliminarMascota(mascota.id!).subscribe({
+          next: () => {
+            this.mascotas = this.mascotas.filter(m => m.id !== mascota.id);
+            this.filtrarMascotas();
+            this.loading = false;
+            this.notificacionService.mostrarExito('Mascota eliminada exitosamente', '¡Éxito!');
+          },
+          error: (error) => {
+            console.error('Error al eliminar mascota:', error);
+            this.notificacionService.mostrarError('Error al eliminar la mascota. Intente nuevamente.');
+            this.loading = false;
+          }
+        });
+      },
+      undefined,
+      'Eliminar',
+      'Cancelar'
+    );
   }
 
   async guardarMascota(): Promise<void> {
     if (!this.mascotaForm.nombre.trim()) {
-      alert('El nombre es requerido');
+      this.notificacionService.mostrarAdvertencia('El nombre de la mascota es requerido', 'Campo requerido');
       return;
     }
 
@@ -158,21 +186,22 @@ export class MascotasComponent implements OnInit {
         if (uploadResponse && (uploadResponse as any).success) {
           fotoUrl = `http://localhost:8080${(uploadResponse as any).url}`;
         } else {
-          alert('Error al subir la imagen');
+          this.notificacionService.mostrarError('Error al subir la imagen');
           this.loading = false;
           return;
         }
       } catch (error) {
         console.error('Error al subir imagen:', error);
-        alert('Error al subir la imagen');
+        this.notificacionService.mostrarError('Error al subir la imagen');
         this.loading = false;
         return;
       }
     }
 
-    // Actualizar el formulario con la URL de la imagen
+    // Actualizar el formulario con la URL de la imagen y sede
     const mascotaData = {
       ...this.mascotaForm,
+      sedeId: this.mascotaForm.sedeId ? Number(this.mascotaForm.sedeId) : undefined,
       fotoUrl: fotoUrl
     };
     
@@ -187,11 +216,11 @@ export class MascotasComponent implements OnInit {
           this.filtrarMascotas();
           this.cerrarModal();
           this.loading = false;
-          alert('Mascota actualizada exitosamente');
+          this.notificacionService.mostrarExito('Mascota actualizada exitosamente', '¡Actualizado!');
         },
         error: (error) => {
           console.error('Error al actualizar mascota:', error);
-          alert('Error al actualizar la mascota. Intente nuevamente.');
+          this.notificacionService.mostrarError('Error al actualizar la mascota. Intente nuevamente.');
           this.loading = false;
         }
       });
@@ -203,11 +232,11 @@ export class MascotasComponent implements OnInit {
           this.filtrarMascotas();
           this.cerrarModal();
           this.loading = false;
-          alert('Mascota creada exitosamente');
+          this.notificacionService.mostrarExito('Mascota creada exitosamente para adopción', '¡Creado!');
         },
         error: (error) => {
           console.error('Error al crear mascota:', error);
-          alert('Error al crear la mascota. Intente nuevamente.');
+          this.notificacionService.mostrarError('Error al crear la mascota. Intente nuevamente.');
           this.loading = false;
         }
       });

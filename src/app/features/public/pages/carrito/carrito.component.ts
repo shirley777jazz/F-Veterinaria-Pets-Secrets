@@ -5,6 +5,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CarritoService, Carrito, CarritoItem } from '../../../../core/services/carrito.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { NotificacionService } from '../../../../core/services/notificacion.service';
 
 @Component({
   selector: 'app-carrito',
@@ -24,7 +25,8 @@ export class CarritoComponent implements OnInit, OnDestroy {
   constructor(
     private carritoService: CarritoService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificacionService: NotificacionService
   ) {}
 
   ngOnInit(): void {
@@ -123,58 +125,61 @@ export class CarritoComponent implements OnInit, OnDestroy {
   eliminarItem(item: CarritoItem): void {
 
     
-    if (!confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
-      return;
-    }
-
-    console.log('� Enviando petición de eliminación al servidor...');
-    
-    this.procesandoAccion = true;
-    
-    this.carritoService.eliminarProducto(item.productoId).subscribe({
-      next: (response: any) => {
-
-        
-        // Forzar recarga inmediata del carrito
-        this.cargarCarrito();
-        this.procesandoAccion = false;
-        this.mostrarMensaje('Producto eliminado del carrito');
+    this.notificacionService.confirmar(
+      `¿Estás seguro de que deseas quitar "${item.productoNombre}" del carrito?`,
+      'Quitar Producto',
+      () => {
+        this.procesandoAccion = true;
+        this.carritoService.eliminarProducto(item.productoId).subscribe({
+          next: () => {
+            this.cargarCarrito();
+            this.procesandoAccion = false;
+            this.mostrarMensaje('Producto eliminado del carrito');
+          },
+          error: (error: any) => {
+            console.error('Error al eliminar producto del carrito:', error);
+            this.procesandoAccion = false;
+            this.manejarError(error);
+          }
+        });
       },
-      error: (error: any) => {
-        console.error('Error al eliminar producto del carrito:', error);
-        this.procesandoAccion = false;
-        this.manejarError(error);
-      }
-    });
-  }
+      undefined,
+      'Eliminar',
+      'Cancelar'
+    );
+    }
 
   // Vaciar todo el carrito
   vaciarCarrito(): void {
-    if (!confirm('¿Estás seguro de que quieres vaciar todo el carrito?')) {
-      return;
-    }
-
-    this.procesandoAccion = true;
-    
-    this.carritoService.vaciarCarrito().subscribe({
-      next: () => {
-        this.carrito = {
-          id: 0,
-          usuarioId: 0,
-          fechaCreacion: new Date().toISOString(),
-          items: [],
-          total: 0,
-          totalItems: 0
-        };
-        this.procesandoAccion = false;
-        this.mostrarMensaje('Carrito vaciado correctamente');
+    this.notificacionService.confirmar(
+      '¿Estás seguro de que quieres vaciar todo el carrito? Se eliminarán todos los productos agregados.',
+      'Vaciar Carrito',
+      () => {
+        this.procesandoAccion = true;
+        this.carritoService.vaciarCarrito().subscribe({
+          next: () => {
+            this.carrito = {
+              id: 0,
+              usuarioId: 0,
+              fechaCreacion: new Date().toISOString(),
+              items: [],
+              total: 0,
+              totalItems: 0
+            };
+            this.procesandoAccion = false;
+            this.notificacionService.mostrarExito('Tu carrito ha sido vaciado correctamente.', 'Carrito Vacío');
+          },
+          error: (error) => {
+            console.error('Error al vaciar carrito:', error);
+            this.procesandoAccion = false;
+            this.manejarError(error);
+          }
+        });
       },
-      error: (error) => {
-        console.error('Error al vaciar carrito:', error);
-        this.procesandoAccion = false;
-        this.manejarError(error);
-      }
-    });
+      undefined,
+      'Sí, vaciar',
+      'Cancelar'
+    );
   }
 
   // Validar si se puede proceder al pago

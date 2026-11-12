@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ProductoService, Producto, Categoria, ProductoRequest } from '../../../../../core/services/producto.service';
-// import { NotificacionService } from '../../../../../core/services/notificacion.service';
+import { ProductoService, Producto, Categoria, ProductoRequest, Sede } from '../../../../../core/services/producto.service';
+import { NotificacionService } from '../../../../../core/services/notificacion.service';
 
 @Component({
   selector: 'app-productos',
@@ -15,6 +15,7 @@ export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
   categorias: Categoria[] = [];
+  sedes: Sede[] = [];
   searchTerm: string = '';
   mostrarModal: boolean = false;
   productoEditando: Producto | null = null;
@@ -37,18 +38,32 @@ export class ProductosComponent implements OnInit {
     descripcion: '',
     precio: 0,
     categoriaId: 0,
+    sedeId: null as number | null,
     imagenUrl: '',
     stock: 0,
     estado: 'activo'
   };
 
   constructor(
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private notificacionService: NotificacionService
   ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
     this.cargarCategorias();
+    this.cargarSedes();
+  }
+
+  cargarSedes(): void {
+    this.productoService.getAllSedes().subscribe({
+      next: (sedes) => {
+        this.sedes = sedes;
+      },
+      error: (error) => {
+        console.error('Error al cargar sedes:', error);
+      }
+    });
   }
 
   cargarProductos(): void {
@@ -112,6 +127,7 @@ export class ProductosComponent implements OnInit {
       descripcion: '',
       precio: 0,
       categoriaId: 0,
+      sedeId: null,
       imagenUrl: '',
       stock: 0,
       estado: 'activo'
@@ -127,6 +143,7 @@ export class ProductosComponent implements OnInit {
       descripcion: producto.descripcion || '',
       precio: producto.precio,
       categoriaId: producto.categoria.id,
+      sedeId: producto.sede?.id || null,
       imagenUrl: producto.imagenUrl || '',
       stock: producto.stock,
       estado: producto.estado
@@ -136,18 +153,25 @@ export class ProductosComponent implements OnInit {
   }
 
   eliminarProducto(producto: Producto): void {
-    if (confirm(`¿Estás seguro de que quieres eliminar el producto "${producto.nombre}"?`)) {
-      this.productoService.eliminarProducto(producto.id).subscribe({
-        next: () => {
-          this.mostrarExito('Producto eliminado exitosamente');
-          this.cargarProductos();
-        },
-        error: (error) => {
-          console.error('Error al eliminar producto:', error);
-          this.mostrarError('Error al eliminar el producto');
-        }
-      });
-    }
+    this.notificacionService.confirmar(
+      `¿Estás seguro de que quieres eliminar el producto "${producto.nombre}"? Esta acción no se puede deshacer.`,
+      'Eliminar Producto',
+      () => {
+        this.productoService.eliminarProducto(producto.id).subscribe({
+          next: () => {
+            this.mostrarExito('Producto eliminado exitosamente');
+            this.cargarProductos();
+          },
+          error: (error) => {
+            console.error('Error al eliminar producto:', error);
+            this.mostrarError('Error al eliminar el producto');
+          }
+        });
+      },
+      undefined,
+      'Eliminar',
+      'Cancelar'
+    );
   }
 
   async guardarProducto(): Promise<void> {
@@ -179,6 +203,7 @@ export class ProductosComponent implements OnInit {
       descripcion: this.productoForm.descripcion || '',
       precio: Number(this.productoForm.precio),
       categoriaId: Number(this.productoForm.categoriaId),
+      sedeId: this.productoForm.sedeId ? Number(this.productoForm.sedeId) : undefined,
       imagenUrl: imagenUrl || '',
       stock: Number(this.productoForm.stock) || 0,
       estado: this.productoForm.estado || 'activo'
@@ -333,12 +358,12 @@ export class ProductosComponent implements OnInit {
     return estado === 'activo' ? 'Activo' : 'Inactivo';
   }
 
-  // Métodos de notificación simples
+  // Métodos de notificación con diseño moderno
   private mostrarExito(mensaje: string): void {
-    alert(`ÉXITO: ${mensaje}`);
+    this.notificacionService.mostrarExito(mensaje, '¡Éxito!');
   }
 
   private mostrarError(mensaje: string): void {
-    alert(`ERROR: ${mensaje}`);
+    this.notificacionService.mostrarError(mensaje, 'Atención');
   }
 }

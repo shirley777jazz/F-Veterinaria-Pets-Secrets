@@ -4,16 +4,21 @@ import { HeaderComponent } from './shared/layout/header/header.component';
 import { FooterComponent } from './shared/layout/footer/footer.component';
 import { BotonScrollComponent } from './shared/layout/boton-scroll/boton-scroll.component';
 import { MantenimientoService } from './core/services/mantenimiento.service';
+import { ModalAlertaComponent } from './shared/components/modal-alerta/modal-alerta.component';
+import { NotificacionService } from './core/services/notificacion.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, BotonScrollComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, BotonScrollComponent, ModalAlertaComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'Veterinaria';
 
-  constructor(private mantenimientoService: MantenimientoService) {}
+  constructor(
+    private mantenimientoService: MantenimientoService,
+    private notificacionService: NotificacionService
+  ) {}
 }
