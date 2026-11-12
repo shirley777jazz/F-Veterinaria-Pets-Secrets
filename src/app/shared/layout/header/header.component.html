@@ -24,6 +24,7 @@
                     <span class="visually-hidden">productos en carrito</span>
                 </span>
             </a>
+
             <div class="dropdown" *ngIf="logueado; else loginLink">
                 <button class="btn btn-link p-0 border-0 dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="icono fa fa-user-circle fa-2x"></i>
@@ -41,6 +42,7 @@
                     <li><a class="dropdown-item" routerLink="/usuario/mascotas"><i class="fa fa-paw me-2"></i> Mis Mascotas</a></li>
                     <li><a class="dropdown-item" routerLink="/usuario/adopciones"><i class="fa fa-heart me-2"></i> Mis Adopciones</a></li>
                     <li><a class="dropdown-item" routerLink="/usuario/citas"><i class="fa fa-calendar me-2"></i> Mis Citas</a></li>
+                    <li><a class="dropdown-item" routerLink="/usuario/mantenimiento"><i class="fa fa-sliders-h me-2"></i> Mantenimiento</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" (click)="cerrarSesion()"><i class="fa fa-sign-out me-2"></i> Cerrar Sesión</a></li>
                 </ul>
@@ -59,6 +61,7 @@
                     <li><a class="dropdown-item" routerLink="/admin/productos"><i class="fa fa-box me-2"></i> Gestión de Productos</a></li>
                     <li><a class="dropdown-item" routerLink="/admin/pedidos"><i class="fa fa-shopping-bag me-2"></i> Gestión de Pedidos</a></li>
                     <li><a class="dropdown-item" routerLink="/admin/citas"><i class="fa fa-calendar me-2"></i> Gestión de Citas</a></li>
+                    <li><a class="dropdown-item" routerLink="/admin/mantenimiento"><i class="fa fa-sliders-h me-2"></i> Mantenimiento</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" (click)="cerrarSesion()"><i class="fa fa-sign-out me-2"></i> Cerrar Sesión</a></li>
                 </ul>
@@ -77,6 +80,7 @@
                     <span class="visually-hidden">productos en carrito</span>
                 </span>
             </a>
+
             <div class="dropdown" *ngIf="logueado; else loginLinkMobile">
                 <button class="btn btn-link p-0 border-0 dropdown-toggle d-flex align-items-center" type="button" id="userDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="iconos fa fa-user-circle fa-lg"></i>
@@ -94,6 +98,7 @@
                     <li><a class="dropdown-item" routerLink="/usuario/mascotas"><i class="fa fa-paw me-2"></i> Mis Mascotas</a></li>
                     <li><a class="dropdown-item" routerLink="/usuario/adopciones"><i class="fa fa-heart me-2"></i> Mis Adopciones</a></li>
                     <li><a class="dropdown-item" routerLink="/usuario/citas"><i class="fa fa-calendar me-2"></i> Mis Citas</a></li>
+                    <li><a class="dropdown-item" routerLink="/usuario/mantenimiento"><i class="fa fa-sliders-h me-2"></i> Mantenimiento</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" (click)="cerrarSesion()"><i class="fa fa-sign-out me-2"></i> Cerrar Sesión</a></li>
                 </ul>
@@ -112,6 +117,7 @@
                     <li><a class="dropdown-item" routerLink="/admin/productos"><i class="fa fa-box me-2"></i> Gestión de Productos</a></li>
                     <li><a class="dropdown-item" routerLink="/admin/pedidos"><i class="fa fa-shopping-bag me-2"></i> Gestión de Pedidos</a></li>
                     <li><a class="dropdown-item" routerLink="/admin/citas"><i class="fa fa-calendar me-2"></i> Gestión de Citas</a></li>
+                    <li><a class="dropdown-item" routerLink="/admin/mantenimiento"><i class="fa fa-sliders-h me-2"></i> Mantenimiento</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" (click)="cerrarSesion()"><i class="fa fa-sign-out me-2"></i> Cerrar Sesión</a></li>
                 </ul>

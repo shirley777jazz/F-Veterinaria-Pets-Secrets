@@ -22,7 +22,8 @@ export class AdminComponent implements OnInit {
     { title: 'Adopciones', route: '/admin/adopciones', icon: 'bi-house-heart' },
     { title: 'Productos', route: '/admin/productos', icon: 'bi-box-seam' },
     { title: 'Pedidos', route: '/admin/pedidos', icon: 'bi-bag' },
-    { title: 'Citas', route: '/admin/citas', icon: 'bi-calendar-event' }
+    { title: 'Citas', route: '/admin/citas', icon: 'bi-calendar-event' },
+    { title: 'Mantenimiento', route: '/admin/mantenimiento', icon: 'bi-gear-wide-connected' }
   ];
 
   constructor(private authService: AuthService) {}

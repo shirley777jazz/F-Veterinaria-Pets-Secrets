@@ -34,9 +34,9 @@ export const routes: Routes = [
     { path: 'carrito', component: CarritoComponent },
     { path: 'checkout', component: CheckoutComponent },
     { path: 'registro', component: RegistroComponent },
-    { path: 'usuario', component: UsuarioComponent },
     { path: 'servicio-formulario', component: ServicioFormularioComponent, canActivate: [AuthGuard] },
     { path: 'detalle-producto/:id', component: DetalleProductoComponent },
+    { path: 'mantenimiento', loadComponent: () => import('./features/private/dashboard/mantenimiento/mantenimiento.component').then(m => m.MantenimientoComponent) },
     {
         path: 'usuario',
         component: UsuarioComponent,
@@ -48,7 +48,8 @@ export const routes: Routes = [
             { path: 'mascotas', component: MisMascotasComponent },
             { path: 'citas', component: MisCitasComponent },
             { path: 'adopciones', component: MisAdopcionesComponent },
-            { path: 'pedidos', component: MisPedidosComponent }
+            { path: 'pedidos', component: MisPedidosComponent },
+            { path: 'mantenimiento', loadComponent: () => import('./features/private/dashboard/mantenimiento/mantenimiento.component').then(m => m.MantenimientoComponent) }
         ]
     },
 
@@ -65,7 +66,8 @@ export const routes: Routes = [
             { path: 'adopciones', loadComponent: () => import('./features/private/dashboard/admin/adopciones/adopciones.component').then(m => m.AdopcionesComponent) },
             { path: 'productos', loadComponent: () => import('./features/private/dashboard/admin/productos/productos.component').then(m => m.ProductosComponent) },
             { path: 'pedidos', loadComponent: () => import('./features/private/dashboard/admin/pedidos/pedidos.component').then(m => m.PedidosComponent) },
-            { path: 'citas', loadComponent: () => import('./features/private/dashboard/admin/citas/citas.component').then(m => m.CitasComponent) }
+            { path: 'citas', loadComponent: () => import('./features/private/dashboard/admin/citas/citas.component').then(m => m.CitasComponent) },
+            { path: 'mantenimiento', loadComponent: () => import('./features/private/dashboard/mantenimiento/mantenimiento.component').then(m => m.MantenimientoComponent) }
         ]
     }
 

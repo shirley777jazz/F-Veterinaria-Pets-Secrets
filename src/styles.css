@@ -21,3 +21,211 @@ body{
     border-radius: 30px;
     padding: 20px;
 }
+
+/* ====================================================
+   SISTEMA DE MANTENIMIENTO Y ACCESIBILIDAD (A11Y)
+   ==================================================== */
+
+/* --- TAMAÑO DE TIPOGRAFÍA --- */
+html[data-font-size="pequeno"] {
+    font-size: 14px !important;
+}
+
+html[data-font-size="mediano"] {
+    font-size: 16px !important;
+}
+
+html[data-font-size="grande"] {
+    font-size: 19px !important;
+}
+
+/* --- MODO OSCURO --- */
+html[data-theme="oscuro"] {
+    --gris: #1e293b;
+    --negro: #f8fafc;
+    --blanco: #0f172a;
+    --plomo: #334155;
+    --gris-claro: #182234;
+    --gris-oscuro: #94a3b8;
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] body {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] header#enlaces-inicio,
+html[data-theme="oscuro"] .header,
+html[data-theme="oscuro"] footer {
+    background-color: #141e30 !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] .sidebar {
+    background-color: #141e30 !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] .sidebar-header {
+    border-color: #334155 !important;
+}
+
+html[data-theme="oscuro"] .sidebar-nav .nav-link {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="oscuro"] .sidebar-nav .nav-link:hover,
+html[data-theme="oscuro"] .sidebar-nav .nav-link.active {
+    background-color: #1A4E8D !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="oscuro"] .card,
+html[data-theme="oscuro"] .bg-white,
+html[data-theme="oscuro"] .dropdown-menu {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="oscuro"] .dropdown-item {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="oscuro"] .dropdown-item:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="oscuro"] .contenido-seccion,
+html[data-theme="oscuro"] .contenido-contacto,
+html[data-theme="oscuro"] .contenido-formulario,
+html[data-theme="oscuro"] .contenido-general {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] .form-control,
+html[data-theme="oscuro"] .form-select {
+    background-color: #0f172a !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] .form-control:focus,
+html[data-theme="oscuro"] .form-select:focus {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #2B78E4 !important;
+}
+
+html[data-theme="oscuro"] .text-muted,
+html[data-theme="oscuro"] .text-secondary {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="oscuro"] .text-dark,
+html[data-theme="oscuro"] h1, 
+html[data-theme="oscuro"] h2, 
+html[data-theme="oscuro"] h3, 
+html[data-theme="oscuro"] h4, 
+html[data-theme="oscuro"] h5, 
+html[data-theme="oscuro"] h6 {
+    color: #f8fafc !important;
+}
+
+html[data-theme="oscuro"] .table {
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="oscuro"] .table th,
+html[data-theme="oscuro"] .table td {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+/* --- MODO ALTO CONTRASTE --- */
+html[data-contrast="alto"] {
+    filter: contrast(110%);
+}
+
+html[data-contrast="alto"] body {
+    font-weight: 500;
+}
+
+html[data-contrast="alto"] .card,
+html[data-contrast="alto"] .btn,
+html[data-contrast="alto"] .form-control,
+html[data-contrast="alto"] .form-select,
+html[data-contrast="alto"] .nav-link {
+    border-width: 2px !important;
+}
+
+html[data-contrast="alto"][data-theme="claro"] {
+    --negro: #000000;
+    --gris-oscuro: #222222;
+}
+
+html[data-contrast="alto"][data-theme="claro"] .card,
+html[data-contrast="alto"][data-theme="claro"] .sidebar,
+html[data-contrast="alto"][data-theme="claro"] .border,
+html[data-contrast="alto"][data-theme="claro"] .border-end,
+html[data-contrast="alto"][data-theme="claro"] .border-bottom {
+    border-color: #000000 !important;
+}
+
+html[data-contrast="alto"][data-theme="claro"] .text-muted {
+    color: #222222 !important;
+}
+
+html[data-contrast="alto"][data-theme="oscuro"] .card,
+html[data-contrast="alto"][data-theme="oscuro"] .sidebar,
+html[data-contrast="alto"][data-theme="oscuro"] .border,
+html[data-contrast="alto"][data-theme="oscuro"] .border-end,
+html[data-contrast="alto"][data-theme="oscuro"] .border-bottom {
+    border-color: #ffffff !important;
+}
+
+/* --- NAVEGACIÓN ACCESIBLE POR TAB (FOCUS-VISIBLE) --- */
+*:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid #1A4E8D !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 4px rgba(26, 78, 141, 0.25) !important;
+    border-radius: 4px;
+}
+
+html[data-theme="oscuro"] *:focus-visible,
+html[data-theme="oscuro"] button:focus-visible,
+html[data-theme="oscuro"] a:focus-visible,
+html[data-theme="oscuro"] input:focus-visible,
+html[data-theme="oscuro"] select:focus-visible,
+html[data-theme="oscuro"] textarea:focus-visible,
+html[data-theme="oscuro"] [tabindex]:focus-visible {
+    outline: 3px solid #8fddff !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 4px rgba(143, 221, 255, 0.3) !important;
+}
+
+html[data-contrast="alto"] *:focus-visible,
+html[data-contrast="alto"] button:focus-visible,
+html[data-contrast="alto"] a:focus-visible,
+html[data-contrast="alto"] input:focus-visible,
+html[data-contrast="alto"] select:focus-visible,
+html[data-contrast="alto"] textarea:focus-visible,
+html[data-contrast="alto"] [tabindex]:focus-visible {
+    outline: 4px solid #f59e0b !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.4) !important;
+}
